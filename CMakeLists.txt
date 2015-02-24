@@ -7,9 +7,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x -stdlib=libc++ -g -O0")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include")
 
 set(SOURCES
+    src/objects/raymarchObject.cpp
+    src/objects/camera.cpp
     src/main.cpp
-    src/filewatcher.cpp
     src/engine.cpp
+    src/shaderAssembler.cpp
     src/shader.cpp
     src/utils.cpp
     src/log.cpp
