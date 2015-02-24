@@ -38,18 +38,6 @@ bool Engine::initShader() {
     return true;
 }
 
-void Engine::setChildProcess(pid_t pid) {
-    childProcess = pid;
-}
-
-void Engine::setParentProcess(pid_t pid) {
-    parentProcess = pid;
-}
-
-void Engine::setFragShaderPath(const string& shaderPath) {
-    fragShaderPath = shaderPath;
-}
-
 void Engine::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -128,13 +116,3 @@ void Engine::renderingThread() {
     glfwTerminate();
 }
 
-void Engine::watchingThread() {
-    char s[1024];
-    realpath(fragShaderPath.c_str(), s);
-
-    string absolutePath(s);
-
-    std::cout << "Watching fragment file source: " << s << std::endl;
-    watcher = FileWatcher(absolutePath, &watcherCallback);
-    watcher.startWatching();
-}
