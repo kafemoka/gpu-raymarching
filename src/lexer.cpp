@@ -44,7 +44,7 @@ std::shared_ptr<AST> Lexer::parse(std::string _scene) {
 
     while(!m_scanner.isEOS()) {
         while(!m_scanner.isEOL()) {
-            std::cout << m_scanner.get() << std::endl;
+            std::cout << m_scanner.get(true) << std::endl;
         }
         m_scanner.nextLine();
     }

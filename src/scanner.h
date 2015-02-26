@@ -11,13 +11,13 @@ public:
     Scanner(std::vector<std::string>& _lines);
 
     char peek() const;
-    char get();
+    char get(bool _skipSpaces = false);
     int getCurrentColumn() const;
     int getCurrentRow() const;
     bool isEOL() const;
     bool isEOS() const;
     void nextLine();
-    void nextChar();
+    void nextChar(bool _skipSpaces = false);
 
 private:
     void readLookAhead();

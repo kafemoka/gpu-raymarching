@@ -18,37 +18,41 @@ char Scanner::peek() const {
     return m_char;
 }
 
-char Scanner::get() {
-    if(isspace(peek())) {
-        nextChar();
+char Scanner::get(bool _skipSpaces) {
+    if(_skipSpaces) {
+        if(isspace(peek())) {
+            nextChar();
+        }
     }
 
     char old = peek();
 
-    nextChar();
+    nextChar(_skipSpaces);
 
     return old;
 }
 
-void Scanner::nextChar() {
-    if(isspace(peek())) {
-        while(isspace(peek())) {
-            m_currentCol++;
-            readLookAhead();
+void Scanner::nextChar(bool _skipSpaces) {
+    if(_skipSpaces) {
+        if(isspace(peek())) {
+            while(isspace(peek())) {
+                m_currentCol++;
+                readLookAhead();
+            }
+            m_currentCol--;
         }
-        m_currentCol--;
     }
 
     m_currentCol++;
 
     if(!isEOL()) {
         readLookAhead();
-    } 
+    }
 }
 
 void Scanner::nextLine() {
     m_currentRow++;
-    
+
     if(!isEOS()) {
         m_currentCol = 0;
         m_currentLine = m_lines[m_currentRow];
