@@ -6,40 +6,10 @@
 #include <iostream>
 #include <queue>
 #include "scanner.h"
-
-enum class TokenType {
-    IDENTIFIER,
-    STATEMENT,
-    KEYWORD,
-    SEPARATOR,
-    EOS
-};
-
-enum class SymbolType {
-    SPHERE,
-    CUBE
-};
+#include "symbolTable.h"
 
 struct AST {};
 struct ASTNode {};
-
-struct Token {
-    Token* m_previous;
-    TokenType m_type;
-    std::string m_value;
-};
-
-struct Statement {};
-
-struct Symbol {
-    SymbolType m_type;
-    std::string m_name;
-};
-
-struct SymbolTable {
-    std::map<int, Symbol> m_symbols;
-};
-
 
 class Lexer {
 public:
@@ -48,6 +18,8 @@ public:
     std::shared_ptr<AST> parse(std::string _scene);
 
 private:
+    void addReservedWords();
+
     SymbolTable m_symbolTable;
     Scanner m_scanner;
 };

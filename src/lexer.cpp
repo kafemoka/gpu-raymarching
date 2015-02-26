@@ -1,33 +1,8 @@
 #include "lexer.h"
 
-Lexer::Lexer() {}
-
-Token consumeToken(std::queue<Token>& _tokens, TokenType _type) {
+Lexer::Lexer() {
 
 }
-
-std::shared_ptr<ASTNode> statements() {
-
-}
-
-void variableDefinition(std::queue<Token>& _tokens, Token& _token) {
-    // add to symbol table
-}
-
-void line() {
-    /*Token token = consumeToken(_tokens, TokenType::STATEMENT);
-
-    switch(token.m_type) {
-        case TokenType::KEYWORD:
-            variableDefinition(_tokens, token);
-            break;
-        case TokenType::STATEMENT:
-            // auto node = statements(token, _code);
-            // add node to syntax tree
-            break;
-    }*/
-}
-
 
 std::shared_ptr<AST> Lexer::parse(std::string _scene) {
     std::istringstream iss(_scene);
@@ -39,12 +14,11 @@ std::shared_ptr<AST> Lexer::parse(std::string _scene) {
             lines.push_back(l);
         }
     }
-
     m_scanner = Scanner(lines);
 
     while(!m_scanner.isEOS()) {
         while(!m_scanner.isEOL()) {
-            std::cout << m_scanner.get(true) << std::endl;
+            std::cout << m_scanner.get(false) << std::endl;
         }
         m_scanner.nextLine();
     }
