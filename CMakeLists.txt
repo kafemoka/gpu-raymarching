@@ -9,10 +9,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include")
 set(SOURCES
     src/objects/raymarchObject.cpp
     src/objects/camera.cpp
+    src/scanner.cpp
     src/main.cpp
     src/engine.cpp
     src/shaderAssembler.cpp
     src/shader.cpp
+    src/lexer.cpp
     src/utils.cpp
     src/log.cpp
 )

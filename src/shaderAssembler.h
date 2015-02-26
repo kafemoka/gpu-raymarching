@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include "objects/raymarchObject.h"
+#include "lexer.h"
 #include "utils.h"
 
 class ShaderAssembler {

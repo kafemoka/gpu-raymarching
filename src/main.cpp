@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 
     std::string fragShaderPath = std::string(argv[1]);
 
-    std::cout << ShaderAssembler::assemble(fragShaderPath) << std::endl;
+    ShaderAssembler::assemble(fragShaderPath);
 
     return 0;
 }

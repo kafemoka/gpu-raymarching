@@ -8,24 +8,23 @@ std::string ShaderAssembler::assemble(std::string _path) {
         return "";
     }
 
-    std::string startTag = "#pragma begin scene_def";
-    std::string endTag = "#pragma end scene_def";
+    std::string sTag = "#pragma begin scene";
+    std::string eTag = "#pragma end scene";
 
-    size_t start = shader.find(startTag);
-    size_t end = shader.find(endTag);
+    size_t start = shader.find(sTag);
+    size_t end = shader.find(eTag);
 
-    if(start == std::string::npos && end == std::string::npos) {
+    if(start == std::string::npos || end == std::string::npos) {
         std::cerr << "missing scene definition" << std::endl;
         return "";
     }
 
-    start += startTag.length();
+    start += sTag.length();
 
-    std::istringstream iss(shader.substr(start, end - start));
+    Lexer lexer;
+    auto ast = lexer.parse(shader.substr(start, end - start));
 
-    for(std::string line; std::getline(iss, line); ) {
-        std::cout << ">> " << line << std::endl;
-    }
+    // TODO : loop over the ast to construct objects
 
     return "";
 }
