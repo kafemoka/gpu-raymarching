@@ -24,7 +24,11 @@ std::string ShaderAssembler::assemble(std::string _path) {
     Lexer lexer;
     lexer.init(shader.substr(start, end - start));
 
-    Token t = lexer.nextToken();
+    lexer.nextToken();
+    lexer.nextToken();
+    lexer.nextToken();
+    lexer.nextToken();
+    lexer.nextToken();
 
     return "";
 }

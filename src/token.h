@@ -21,6 +21,7 @@ enum class TokenType {
     COMMA,      // ,
     SEMICOLON,  // ;
     COLON,      // :
+    SPACE,        
 
     RAYMARCH,   // raymarch
     SPHERE,     // Sphere

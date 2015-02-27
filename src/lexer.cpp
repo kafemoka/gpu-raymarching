@@ -11,23 +11,24 @@ bool Lexer::isKeyWord(std::string& _word) {
 
 Token Lexer::identifier() {
     Token token;
-    std::string lexeme = "";
-    char c = m_scanner.get(false);
+    std::string lexeme;
+    char c = m_scanner.peek();
 
-    while(!isspace(c)) {
-        lexeme += c;
-        c = m_scanner.get(false);
+    while(!isspace(c) && (isalpha(c) || isdigit(c))) {
+        lexeme += m_scanner.peek();
+        m_scanner.get(false);
+        c = m_scanner.peek();
     }
 
     if(isKeyWord(lexeme)) {
         std::cout << "keyword:" << lexeme << std::endl;
-
         if(lexeme == "Sphere") {
             return Token(TokenType::SPHERE);
         } else if(lexeme == "Cube") {
             return Token(TokenType::CUBE);
         }
     } else {
+        std::cout << "identifier:" << lexeme << std::endl;
         return Token(TokenType::IDENTIFIER, lexeme);
     }
 
@@ -40,6 +41,8 @@ Token Lexer::nextToken() {
     while(!m_scanner.isEOS()) {
         switch(m_scanner.peek()) {
             case '(':
+                std::cout << "token:lparen" << std::endl;
+                m_scanner.get(false);
                 return Token(TokenType::LPAREN);
             case ')':
                 return Token(TokenType::RPAREN);
@@ -47,6 +50,11 @@ Token Lexer::nextToken() {
                 return Token(TokenType::SEMICOLON);
             case ',':
                 return Token(TokenType::COMMA);
+        }
+
+        if(isspace(m_scanner.peek())) {
+            m_scanner.get(false);
+            return Token(TokenType::SPACE);
         }
 
         if(isdigit(m_scanner.peek())) {
