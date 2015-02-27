@@ -22,9 +22,9 @@ std::string ShaderAssembler::assemble(std::string _path) {
     start += sTag.length();
 
     Lexer lexer;
-    auto ast = lexer.parse(shader.substr(start, end - start));
+    lexer.init(shader.substr(start, end - start));
 
-    // TODO : loop over the ast to construct objects
+    Token t = lexer.nextToken();
 
     return "";
 }

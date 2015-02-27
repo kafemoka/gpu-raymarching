@@ -1,10 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <map>
 #include <sstream>
 #include <iostream>
-#include <queue>
+#include <vector>
+#include <algorithm>
 #include "scanner.h"
 #include "symbolTable.h"
 
@@ -15,11 +15,15 @@ class Lexer {
 public:
     Lexer();
 
-    std::shared_ptr<AST> parse(std::string _scene);
+    Token identifier();
+    void init(std::string _scene);
+    Token nextToken();
 
 private:
     void addReservedWords();
+    bool isKeyWord(std::string& _word);
 
     SymbolTable m_symbolTable;
     Scanner m_scanner;
+    std::vector<std::string> m_keywords;
 };

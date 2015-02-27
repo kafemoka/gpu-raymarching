@@ -56,6 +56,7 @@ void Scanner::nextLine() {
     if(!isEOS()) {
         m_currentCol = 0;
         m_currentLine = m_lines[m_currentRow];
+        readLookAhead();
     }
 }
 
