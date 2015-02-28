@@ -8,8 +8,8 @@ std::string ShaderAssembler::assemble(std::string _path) {
         return "";
     }
 
-    std::string sTag = "#pragma begin scene";
-    std::string eTag = "#pragma end scene";
+    std::string sTag = "#pragma begin raym";
+    std::string eTag = "#pragma end raym";
 
     size_t start = shader.find(sTag);
     size_t end = shader.find(eTag);
@@ -24,11 +24,11 @@ std::string ShaderAssembler::assemble(std::string _path) {
     Lexer lexer;
     lexer.init(shader.substr(start, end - start));
 
-    lexer.nextToken();
-    lexer.nextToken();
-    lexer.nextToken();
-    lexer.nextToken();
-    lexer.nextToken();
+    Token token = lexer.nextToken();
+
+    while(token.m_type != TokenType::ILLEGAL) {
+        token = lexer.nextToken();
+    }
 
     return "";
 }

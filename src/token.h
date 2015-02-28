@@ -4,8 +4,9 @@
 
 enum class TokenType {
     ENDOFFILE,
+    ENDOFLINE,
     ILLEGAL,
-    COMMENT,    // //
+    COMMENT,    // #
     FLOAT,      // 123.12
 
     UNION,      // +
@@ -21,11 +22,12 @@ enum class TokenType {
     COMMA,      // ,
     SEMICOLON,  // ;
     COLON,      // :
-    SPACE,        
+    SPACE,
 
     RAYMARCH,   // raymarch
     SPHERE,     // Sphere
-    CUBE        // Cube
+    CUBE,       // Cube
+    OBJECT
     // ...
 };
 

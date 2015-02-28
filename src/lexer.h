@@ -11,11 +11,18 @@
 struct AST {};
 struct ASTNode {};
 
+#define KW_SPHERE   "Sphere"
+#define KW_CUBE     "Cube"
+#define KW_OBJECT   "Object"
+#define KW_RAYMARCH "raymarch"
+
 class Lexer {
 public:
     Lexer();
 
     Token identifier();
+    Token digit();
+
     void init(std::string _scene);
     Token nextToken();
 
