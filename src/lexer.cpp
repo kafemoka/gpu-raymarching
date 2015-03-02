@@ -75,11 +75,11 @@ Token Lexer::nextToken() {
             case '(':
                 std::cout << "token:lparen" << std::endl;
                 m_scanner.get(false);
-                return Token(TokenType::LPAREN);
+                return Token(TokenType::LPAREN, "(");
             case ')':
                 std::cout << "token:rparen" << std::endl;
                 m_scanner.get(false);
-                return Token(TokenType::RPAREN);
+                return Token(TokenType::RPAREN, ")");
             case ';':
                 std::cout << "token:semicolon" << std::endl;
                 m_scanner.get(true);
@@ -87,7 +87,7 @@ Token Lexer::nextToken() {
             case ',':
                 std::cout << "token:comma" << std::endl;
                 m_scanner.get(false);
-                return Token(TokenType::COMMA);
+                return Token(TokenType::COMMA, ",");
             case '#':
                 std::cout << "token:comment" << std::endl;
                 m_scanner.nextLine();

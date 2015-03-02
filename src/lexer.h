@@ -12,6 +12,7 @@
 #define KW_CUBE     "Cube"
 #define KW_OBJECT   "Object"
 #define KW_RAYMARCH "raymarch"
+#define KW_VEC3     "vec3"
 
 class Lexer {
 public:

@@ -1,5 +1,9 @@
 #include "parser.h"
 
+Parser::Parser(std::shared_ptr<Lexer> _lexer) : m_lexer(_lexer) {
+    m_symbolTable = std::shared_ptr<SymbolTable>(new SymbolTable);
+}
+
 void Parser::operation() {
 
 }
@@ -13,41 +17,56 @@ void Parser::raymarch() {
 }
 
 std::shared_ptr<ASTValueNode> Parser::position() {
-    readLookAhead();
-    checkToken(TokenType::IDENTIFIER);
-    if(peek().m_lexeme == "vec3") {
-        readLookAhead();
-        checkToken(TokenType::LPAREN);
+    checkNextToken(TokenType::IDENTIFIER);
+    std::string lexeme;
+
+    appendToken(lexeme);
+
+    if(peek().m_lexeme == KW_VEC3) {
+        checkNextToken(TokenType::LPAREN);
+        appendToken(lexeme);
+
         for(int i = 0; i < 3; ++i) {
-            readLookAhead();
-            checkToken(TokenType::FLOAT);
-            readLookAhead();
-            checkToken(TokenType::COMMA);
+            checkNextToken(TokenType::FLOAT);
+            appendToken(lexeme);
+            checkNextToken(TokenType::COMMA);
+            appendToken(lexeme);
         }
-        readLookAhead();
-        checkToken(TokenType::RPAREN);
+
+        checkNextToken(TokenType::RPAREN);
+        appendToken(lexeme);
     }
+
+    return std::shared_ptr<ASTValueNode>(new ASTValueNode(lexeme));
+}
+
+void Parser::appendToken(std::string& _lexeme) {
+    _lexeme += peek().m_lexeme;
 }
 
 std::shared_ptr<ASTCubeNode> Parser::cube() {
-    readLookAhead();
-    checkToken(TokenType::SPACE);
-    readLookAhead();
+    checkNextToken(TokenType::SPACE, false);
+    checkNextToken(TokenType::IDENTIFIER);
 
-    if(checkToken(TokenType::IDENTIFIER)) {
-        std::shared_ptr<ASTValueNode> idNode(new ASTValueNode(peek().m_lexeme));
-        readLookAhead();
-        checkToken(TokenType::LPAREN);
-        std::vector<std::shared_ptr<ASTValueNode>> args;
-        args.push_back(position());
-    }
+    std::shared_ptr<ASTValueNode> idNode(new ASTValueNode(peek().m_lexeme));
+    checkNextToken(TokenType::LPAREN);
+    std::vector<std::shared_ptr<ASTValueNode>> args;
+    args.push_back(position());
+
+    return std::shared_ptr<ASTCubeNode>(new ASTCubeNode(idNode, m_symbolTable, args, 0, 0));
 }
 
 void Parser::sphere() {
 
 }
 
-bool Parser::checkToken(TokenType _type) {
+bool Parser::checkNextToken(TokenType _type, bool _skipSpaces) {
+    readLookAhead();
+    if(_skipSpaces) {
+        while(peek().m_type == TokenType::SPACE) {
+            readLookAhead();
+        }
+    }
     if(_type != peek().m_type) {
         m_errors.push("Unexpected token " + tokenType(_type));
         return false;
@@ -60,15 +79,18 @@ void Parser::statements() {
 
     while(peek().m_type != TokenType::ILLEGAL) {
         switch(peek().m_type) {
-            case TokenType::RAYMARCH:
+            case TokenType::RAYMARCH: {
                 raymarch();
                 break;
-            case TokenType::CUBE:
-                cube();
+            }
+            case TokenType::CUBE: {
+                auto c = cube();
                 break;
-            case TokenType::OBJECT:
+            }
+            case TokenType::OBJECT: {
                 aggregate();
                 break;
+            }
         }
         readLookAhead();
     }

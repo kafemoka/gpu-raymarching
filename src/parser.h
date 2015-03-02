@@ -3,6 +3,7 @@
 #include "lexer.h"
 #include "token.h"
 #include "ast.h"
+#include "symbolTable.h"
 #include <iostream>
 #include <stack>
 #include <string>
@@ -10,7 +11,7 @@
 
 class Parser {
 public:
-    Parser(std::shared_ptr<Lexer> _lexer) : m_lexer(_lexer) {}
+    Parser(std::shared_ptr<Lexer> _lexer);
 
     std::stack<std::string> parse();
 
@@ -23,13 +24,14 @@ private:
     std::shared_ptr<ASTValueNode> position();
     void sphere();
 
-    bool checkToken(TokenType _type);
+    bool checkNextToken(TokenType _type, bool _skipSpaces = true);
 
     Token peek();
     void readLookAhead();
-
-    std::stack<std::string> m_errors;
+    void appendToken(std::string& _lexeme);
 
     Token m_token;
     std::shared_ptr<Lexer> m_lexer;
+    std::shared_ptr<SymbolTable> m_symbolTable;
+    std::stack<std::string> m_errors;
 };
