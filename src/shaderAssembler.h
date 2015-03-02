@@ -5,6 +5,7 @@
 #include "objects/raymarchObject.h"
 #include "lexer.h"
 #include "utils.h"
+#include "parser.h"
 
 class ShaderAssembler {
 

@@ -21,13 +21,16 @@ std::string ShaderAssembler::assemble(std::string _path) {
 
     start += sTag.length();
 
-    Lexer lexer;
-    lexer.init(shader.substr(start, end - start));
+    std::shared_ptr<Lexer> lexer(new Lexer());
+    lexer->init(shader.substr(start, end - start));
 
-    Token token = lexer.nextToken();
+    Parser parser(lexer);
 
-    while(token.m_type != TokenType::ILLEGAL) {
-        token = lexer.nextToken();
+    std::stack<std::string> errors = parser.parse();
+
+    while(errors.size() != 0) {
+        std::cout << errors.top() << std::endl;
+        errors.pop();
     }
 
     return "";

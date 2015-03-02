@@ -8,9 +8,6 @@
 #include "scanner.h"
 #include "symbolTable.h"
 
-struct AST {};
-struct ASTNode {};
-
 #define KW_SPHERE   "Sphere"
 #define KW_CUBE     "Cube"
 #define KW_OBJECT   "Object"

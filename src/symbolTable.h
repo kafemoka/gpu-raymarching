@@ -5,10 +5,9 @@
 #include "token.h"
 
 struct SymbolTableEntry {
-    std::shared_ptr<Token> m_token;
+    std::string m_lexeme;
     int m_line;
     int m_column;
-    bool m_isReservedWord;
 };
 
 class SymbolTable {
@@ -16,7 +15,7 @@ class SymbolTable {
 public:
     SymbolTable() {}
 
-    void add(std::string _identifier, int _line);
+    bool add(const SymbolTableEntry& _entry);
     bool contains(std::string _lexeme);
 
 private:
