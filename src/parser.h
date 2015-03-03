@@ -13,10 +13,11 @@ class Parser {
 public:
     Parser(std::shared_ptr<Lexer> _lexer);
 
-    std::stack<std::string> parse();
+    std::stack<std::string> getErrors();
+    std::shared_ptr<AST> parse();
 
 private:
-    void statements();
+    std::shared_ptr<ASTStatementsNode> statements();
     void aggregate();
     void operation();
     void raymarch();

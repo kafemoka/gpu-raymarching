@@ -74,7 +74,13 @@ bool Parser::checkNextToken(TokenType _type, bool _skipSpaces) {
     return true;
 }
 
-void Parser::statements() {
+std::stack<std::string> Parser::getErrors() {
+    return m_errors;
+}
+
+std::shared_ptr<ASTStatementsNode> Parser::statements() {
+    std::shared_ptr<ASTStatementsNode> stmts(new ASTStatementsNode);
+
     readLookAhead();
 
     while(peek().m_type != TokenType::ILLEGAL) {
@@ -85,6 +91,7 @@ void Parser::statements() {
             }
             case TokenType::CUBE: {
                 auto c = cube();
+                
                 break;
             }
             case TokenType::OBJECT: {
@@ -94,6 +101,8 @@ void Parser::statements() {
         }
         readLookAhead();
     }
+
+    return stmts;
 }
 
 Token Parser::peek() {
@@ -104,8 +113,7 @@ void Parser::readLookAhead() {
     m_token = m_lexer->nextToken();
 }
 
-std::stack<std::string> Parser::parse() {
-    statements();
-
-    return m_errors;
+std::shared_ptr<AST> Parser::parse() {
+    auto stmts = statements();
+    return std::shared_ptr<AST>(new AST(stmts));
 }

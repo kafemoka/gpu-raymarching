@@ -26,12 +26,7 @@ std::string ShaderAssembler::assemble(std::string _path) {
 
     Parser parser(lexer);
 
-    std::stack<std::string> errors = parser.parse();
-
-    while(errors.size() != 0) {
-        std::cout << errors.top() << std::endl;
-        errors.pop();
-    }
+    auto ast = parser.parse();
 
     return "";
 }

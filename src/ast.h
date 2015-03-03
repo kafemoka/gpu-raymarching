@@ -9,16 +9,24 @@ protected:
     std::vector<std::shared_ptr<ASTNode>> m_childs;
 };
 
-class AST {
-protected:
-    std::shared_ptr<ASTNode> m_root;
-};
-
 class ASTStatementNode : public ASTNode {
 public:
     ASTStatementNode(std::shared_ptr<SymbolTable> _symbolTable) : m_symbolTable(_symbolTable) {}
 protected:
     std::shared_ptr<SymbolTable> m_symbolTable;
+};
+
+class ASTStatementsNode : public ASTNode {
+public:
+    void addNode(ASTStatementsNode _node);
+    void addStatement(std::shared_ptr<ASTStatementNode> _stmt);
+};
+
+class AST {
+public:
+    AST(std::shared_ptr<ASTStatementsNode> _root) : m_root(_root) {}
+protected:
+    std::shared_ptr<ASTStatementsNode> m_root;
 };
 
 class ASTValueNode : public ASTNode {

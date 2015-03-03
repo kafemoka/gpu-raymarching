@@ -13,3 +13,6 @@ ASTCubeNode::ASTCubeNode(std::shared_ptr<ASTValueNode> _id,
     _symbolTable->add({ _id->getValue(), _line, _column });
 }
 
+void ASTStatementsNode::addStatement(std::shared_ptr<ASTStatementNode> _stmt) {
+    m_childs.push_back(_stmt);
+}
