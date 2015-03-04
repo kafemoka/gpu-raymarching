@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <iostream>
 #include "symbolTable.h"
 
 class ASTNode {
@@ -37,11 +38,21 @@ private:
     std::string m_value;
 };
 
-class ASTCubeNode : public ASTStatementNode {
+class ASTDeclarationNode : public ASTStatementNode {
 public:
-    ASTCubeNode(std::shared_ptr<ASTValueNode> _id,
+    ASTDeclarationNode(std::shared_ptr<ASTValueNode> _id,
             std::shared_ptr<SymbolTable> _symbolTable,
             std::vector<std::shared_ptr<ASTValueNode>> _args,
+            TokenType _type,
             int _line, int _column);
+
+    // void evaluate(std::shared_ptr<ShaderSymbolTable> _shaderSymbols);
+};
+
+class ASTAggregateNode : public ASTStatementNode {
+public:
+    ASTAggregateNode(std::shared_ptr<ASTValueNode> _id,
+        std::shared_ptr<SymbolTable> _symbolTable,
+        int _line, int _column);
 };
 

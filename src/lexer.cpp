@@ -23,7 +23,6 @@ Token Lexer::identifier() {
     }
 
     if(isKeyWord(lexeme)) {
-        std::cout << "keyword:" << lexeme << std::endl;
         if(lexeme == KW_SPHERE) {
             return Token(TokenType::SPHERE);
         } else if(lexeme == KW_CUBE) {
@@ -34,11 +33,17 @@ Token Lexer::identifier() {
             return Token(TokenType::RAYMARCH);
         }
     } else {
-        std::cout << "identifier:" << lexeme << std::endl;
         return Token(TokenType::IDENTIFIER, lexeme);
     }
 
     return token;
+}
+
+int Lexer::getLine() {
+    return m_scanner.getCurrentRow();
+}
+int Lexer::getColumn() {
+    return m_scanner.getCurrentColumn();
 }
 
 Token Lexer::digit() {
@@ -55,7 +60,6 @@ Token Lexer::digit() {
     }
 
     if(fract) {
-        std::cout << "float:" << lexeme << std::endl;
         return Token(TokenType::FLOAT, lexeme);
     }
 
@@ -73,41 +77,32 @@ Token Lexer::nextToken() {
 
         switch(m_scanner.peek()) {
             case '(':
-                std::cout << "token:lparen" << std::endl;
                 m_scanner.get(false);
                 return Token(TokenType::LPAREN, "(");
             case ')':
-                std::cout << "token:rparen" << std::endl;
                 m_scanner.get(false);
                 return Token(TokenType::RPAREN, ")");
             case ';':
-                std::cout << "token:semicolon" << std::endl;
                 m_scanner.get(true);
                 return Token(TokenType::SEMICOLON);
             case ',':
-                std::cout << "token:comma" << std::endl;
                 m_scanner.get(false);
                 return Token(TokenType::COMMA, ",");
             case '#':
-                std::cout << "token:comment" << std::endl;
                 m_scanner.nextLine();
                 return Token(TokenType::COMMENT);
             case '=':
-                std::cout << "token:assign" << std::endl;
                 m_scanner.get(false);
-                return Token(TokenType::ASSIGN);
+                return Token(TokenType::ASSIGN, "=");
             case '+':
-                std::cout << "token:union" << std::endl;
                 m_scanner.get(false);
-                return Token(TokenType::UNION);
+                return Token(TokenType::UNION, "+");
             case '-':
-                std::cout << "token:substract" << std::endl;
                 m_scanner.get(false);
-                return Token(TokenType::SUBSTRACT);
+                return Token(TokenType::SUBSTRACT, "-");
             case '/':
-                std::cout << "token:intersect" << std::endl;
                 m_scanner.get(false);
-                return Token(TokenType::INTERSECT);
+                return Token(TokenType::INTERSECT, "/");
         }
 
         if(isspace(m_scanner.peek())) {

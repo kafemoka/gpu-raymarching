@@ -10,11 +10,14 @@ set(SOURCES
     src/objects/raymarchObject.cpp
     src/objects/camera.cpp
     src/scanner.cpp
+    src/lexer.cpp
     src/symbolTable.cpp
     src/main.cpp
+    src/ast.cpp
     src/engine.cpp
     src/shaderAssembler.cpp
     src/shader.cpp
+    src/parser.cpp
     src/lexer.cpp
     src/utils.cpp
     src/log.cpp

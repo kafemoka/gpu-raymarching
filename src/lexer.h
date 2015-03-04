@@ -24,6 +24,9 @@ public:
     void init(std::string _scene);
     Token nextToken();
 
+    int getLine();
+    int getColumn();
+
 private:
     void addReservedWords();
     bool isKeyWord(std::string& _word);

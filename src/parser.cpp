@@ -4,12 +4,11 @@ Parser::Parser(std::shared_ptr<Lexer> _lexer) : m_lexer(_lexer) {
     m_symbolTable = std::shared_ptr<SymbolTable>(new SymbolTable);
 }
 
-void Parser::operation() {
-
-}
-
-void Parser::aggregate() {
-
+std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
+    checkNextToken(TokenType::OBJECT);
+    auto idNode = identifier();
+    auto node = new ASTAggregateNode(idNode, m_symbolTable, m_lexer->getLine(), m_lexer->getColumn());
+    return std::shared_ptr<ASTAggregateNode>(node);
 }
 
 void Parser::raymarch() {
@@ -29,8 +28,10 @@ std::shared_ptr<ASTValueNode> Parser::position() {
         for(int i = 0; i < 3; ++i) {
             checkNextToken(TokenType::FLOAT);
             appendToken(lexeme);
-            checkNextToken(TokenType::COMMA);
-            appendToken(lexeme);
+            if(i < 2) {
+                checkNextToken(TokenType::COMMA);
+                appendToken(lexeme);
+            }
         }
 
         checkNextToken(TokenType::RPAREN);
@@ -44,37 +45,72 @@ void Parser::appendToken(std::string& _lexeme) {
     _lexeme += peek().m_lexeme;
 }
 
-std::shared_ptr<ASTCubeNode> Parser::cube() {
+std::shared_ptr<ASTValueNode> Parser::identifier() {
     checkNextToken(TokenType::SPACE, false);
     checkNextToken(TokenType::IDENTIFIER);
-
-    std::shared_ptr<ASTValueNode> idNode(new ASTValueNode(peek().m_lexeme));
-    checkNextToken(TokenType::LPAREN);
-    std::vector<std::shared_ptr<ASTValueNode>> args;
-    args.push_back(position());
-
-    return std::shared_ptr<ASTCubeNode>(new ASTCubeNode(idNode, m_symbolTable, args, 0, 0));
+    return std::shared_ptr<ASTValueNode>(new ASTValueNode(peek().m_lexeme));
 }
 
-void Parser::sphere() {
+std::shared_ptr<ASTDeclarationNode> Parser::sphere() {
+    std::vector<std::shared_ptr<ASTValueNode>> args;
 
+    auto idNode = identifier();
+    checkNextToken(TokenType::LPAREN);
+    args.push_back(position());
+    checkNextToken(TokenType::COMMA);
+    checkNextToken(TokenType::FLOAT);
+    args.push_back(std::shared_ptr<ASTValueNode>(new ASTValueNode(peek().m_lexeme)));
+    checkNextToken(TokenType::RPAREN);
+    checkNextToken(TokenType::SEMICOLON);
+
+    auto node = new ASTDeclarationNode(idNode, m_symbolTable, args, TokenType::SPHERE, m_lexer->getLine(), m_lexer->getColumn());
+
+    return std::shared_ptr<ASTDeclarationNode>(node);
+}
+
+std::shared_ptr<ASTDeclarationNode> Parser::cube() {
+    std::vector<std::shared_ptr<ASTValueNode>> args;
+
+    auto idNode = identifier();
+    checkNextToken(TokenType::LPAREN);
+    args.push_back(position());
+    checkNextToken(TokenType::RPAREN);
+    checkNextToken(TokenType::SEMICOLON);
+
+    auto node = new ASTDeclarationNode(idNode, m_symbolTable, args, TokenType::CUBE, m_lexer->getLine(), m_lexer->getColumn());
+
+    return std::shared_ptr<ASTDeclarationNode>(node);
 }
 
 bool Parser::checkNextToken(TokenType _type, bool _skipSpaces) {
     readLookAhead();
+
     if(_skipSpaces) {
+        // move until non-space token
         while(peek().m_type == TokenType::SPACE) {
             readLookAhead();
         }
     }
+
+    // stack errors
     if(_type != peek().m_type) {
-        m_errors.push("Unexpected token " + tokenType(_type));
+        std::string error;
+
+        if(peek().m_lexeme != "") {
+            error += "Unexpected " + peek().m_lexeme;
+        } else {
+            error += "Unexpected token " + tokenType(_type);
+        }
+
+        error += " at line " + std::to_string(m_lexer->getLine()) + ", column " + std::to_string(m_lexer->getColumn());
+        m_errors.push(error);
         return false;
     }
+
     return true;
 }
 
-std::stack<std::string> Parser::getErrors() {
+std::queue<std::string> Parser::getErrors() {
     return m_errors;
 }
 
@@ -84,22 +120,36 @@ std::shared_ptr<ASTStatementsNode> Parser::statements() {
     readLookAhead();
 
     while(peek().m_type != TokenType::ILLEGAL) {
+
+        // parse statements
         switch(peek().m_type) {
             case TokenType::RAYMARCH: {
                 raymarch();
                 break;
             }
             case TokenType::CUBE: {
-                auto c = cube();
-                
+                stmts->addStatement(cube());
+                break;
+            }
+            case TokenType::SPHERE: {
+                stmts->addStatement(sphere());
                 break;
             }
             case TokenType::OBJECT: {
-                aggregate();
+                stmts->addStatement(aggregate());
                 break;
             }
         }
+
+        checkNextToken(TokenType::ENDOFLINE);
         readLookAhead();
+
+        // move next line
+        TokenType type = peek().m_type;
+        while (type == TokenType::SPACE || type == TokenType::COMMENT) {
+            readLookAhead();
+            type = peek().m_type;
+        }
     }
 
     return stmts;
@@ -114,6 +164,5 @@ void Parser::readLookAhead() {
 }
 
 std::shared_ptr<AST> Parser::parse() {
-    auto stmts = statements();
-    return std::shared_ptr<AST>(new AST(stmts));
+    return std::shared_ptr<AST>(new AST(statements()));
 }

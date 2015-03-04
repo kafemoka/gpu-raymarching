@@ -39,6 +39,9 @@ static std::string tokenType(TokenType _type) {
         s_tokenTypes[TokenType::CUBE] = "cube";
         s_tokenTypes[TokenType::SPACE] = "space";
         s_tokenTypes[TokenType::SPHERE] = "sphere";
+        s_tokenTypes[TokenType::OBJECT] = "object";
+        s_tokenTypes[TokenType::ENDOFLINE] = "end of line";
+        s_tokenTypes[TokenType::FLOAT] = "float";
     }
     return s_tokenTypes[_type];
 }

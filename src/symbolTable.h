@@ -5,6 +5,7 @@
 #include "token.h"
 
 struct SymbolTableEntry {
+    TokenType m_type;
     std::string m_lexeme;
     int m_line;
     int m_column;

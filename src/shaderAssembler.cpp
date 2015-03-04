@@ -28,5 +28,11 @@ std::string ShaderAssembler::assemble(std::string _path) {
 
     auto ast = parser.parse();
 
+    auto errors = parser.getErrors();
+
+    if(errors.size() > 0) {
+        std::cout << errors.front() << std::endl;
+    }
+
     return "";
 }
