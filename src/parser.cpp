@@ -5,7 +5,6 @@ Parser::Parser(std::shared_ptr<Lexer> _lexer) : m_lexer(_lexer) {
 }
 
 std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
-    checkNextToken(TokenType::OBJECT);
     auto idNode = identifier();
     auto node = new ASTAggregateNode(idNode, m_symbolTable, m_lexer->getLine(), m_lexer->getColumn());
     return std::shared_ptr<ASTAggregateNode>(node);
@@ -152,6 +151,11 @@ std::shared_ptr<ASTStatementsNode> Parser::statements() {
         }
     }
 
+    if(peek().m_type == TokenType::ILLEGAL) {
+        m_errors.push("Illegal token line " + std::to_string(m_lexer->getLine())
+                      + " column " + std::to_string(m_lexer->getColumn()));
+    }
+
     return stmts;
 }
 
@@ -160,6 +164,7 @@ Token Parser::peek() {
 }
 
 void Parser::readLookAhead() {
+    m_last = m_token;
     m_token = m_lexer->nextToken();
 }
 

@@ -20,6 +20,10 @@ Token Lexer::identifier() {
         lexeme += m_scanner.peek();
         m_scanner.get(false);
         c = m_scanner.peek();
+
+        if(m_scanner.isEOL()) {
+            return token;
+        }
     }
 
     if(isKeyWord(lexeme)) {
@@ -57,6 +61,10 @@ Token Lexer::digit() {
         lexeme += m_scanner.peek();
         m_scanner.get(false);
         c = m_scanner.peek();
+
+        if(m_scanner.isEOL()) {
+            return token;
+        }
     }
 
     if(fract) {

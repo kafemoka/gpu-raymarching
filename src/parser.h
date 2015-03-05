@@ -53,6 +53,7 @@ private:
     void appendToken(std::string& _lexeme);
 
     Token m_token;
+    Token m_last;
     std::shared_ptr<Lexer> m_lexer;
     std::shared_ptr<SymbolTable> m_symbolTable;
     std::queue<std::string> m_errors;

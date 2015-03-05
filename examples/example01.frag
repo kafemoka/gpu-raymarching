@@ -5,11 +5,14 @@ uniform float time
 Cube c( vec3(0.0, 1.0, 0.0) );
 Sphere sphere( vec3(0.0, 1.5, 0.0), 1.0 );
 
-Object o1 = c + sphere; # union op
+Object o1;
+
+o1 = c + sphere;        # union op
+
 Object o2 = o1 - c;     # substraction op
 Object o3 = o1 / c;     # intersection op
 
-raymarch(100.0, o); # comment
+raymarch( 100.0, o ); # comment
 
 #pragma end raym
 
