@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
-#include "symbolTable.h"
+#include "context.h"
 
 class ASTNode {
 protected:
@@ -12,9 +12,9 @@ protected:
 
 class ASTStatementNode : public ASTNode {
 public:
-    ASTStatementNode(std::shared_ptr<SymbolTable> _symbolTable) : m_symbolTable(_symbolTable) {}
+    ASTStatementNode(std::shared_ptr<Context> _context) : m_context(_context) {}
 protected:
-    std::shared_ptr<SymbolTable> m_symbolTable;
+    std::shared_ptr<Context> m_context;
 };
 
 class ASTStatementsNode : public ASTNode {
@@ -41,7 +41,7 @@ private:
 class ASTDeclarationNode : public ASTStatementNode {
 public:
     ASTDeclarationNode(std::shared_ptr<ASTValueNode> _id,
-            std::shared_ptr<SymbolTable> _symbolTable,
+            std::shared_ptr<Context> _context,
             std::vector<std::shared_ptr<ASTValueNode>> _args,
             TokenType _type,
             int _line, int _column);
@@ -52,7 +52,7 @@ public:
 class ASTAggregateNode : public ASTStatementNode {
 public:
     ASTAggregateNode(std::shared_ptr<ASTValueNode> _id,
-        std::shared_ptr<SymbolTable> _symbolTable,
+        std::shared_ptr<Context> _context,
         int _line, int _column);
 };
 

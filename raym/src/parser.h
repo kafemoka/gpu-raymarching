@@ -4,6 +4,7 @@
 #include "token.h"
 #include "ast.h"
 #include "symbolTable.h"
+#include "context.h"
 #include <iostream>
 #include <queue>
 #include <string>
@@ -55,6 +56,6 @@ private:
     Token m_token;
     Token m_last;
     std::shared_ptr<Lexer> m_lexer;
-    std::shared_ptr<SymbolTable> m_symbolTable;
+    std::shared_ptr<Context> m_context;
     std::queue<std::string> m_errors;
 };

@@ -1,18 +1,11 @@
-#include "shaderAssembler.h"
+#include "interpreter.h"
 
-std::string ShaderAssembler::assemble(std::string _path) {
-    std::string shader;
-
-    if(!loadFromPath(_path, &shader)) {
-        std::cerr << "error loading shader from " + _path << std::endl;
-        return "";
-    }
-
+std::string Interpreter::assemble(std::string _shader) {
     std::string sTag = "#pragma begin raym";
     std::string eTag = "#pragma end raym";
 
-    size_t start = shader.find(sTag);
-    size_t end = shader.find(eTag);
+    size_t start = _shader.find(sTag);
+    size_t end = _shader.find(eTag);
 
     if(start == std::string::npos || end == std::string::npos) {
         std::cerr << "missing scene definition" << std::endl;
@@ -22,7 +15,7 @@ std::string ShaderAssembler::assemble(std::string _path) {
     start += sTag.length();
 
     std::shared_ptr<Lexer> lexer(new Lexer());
-    lexer->init(shader.substr(start, end - start));
+    lexer->init(_shader.substr(start, end - start));
 
     Parser parser(lexer);
 
