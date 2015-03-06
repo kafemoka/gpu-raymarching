@@ -1,12 +1,14 @@
 #include "parser.h"
 
 Parser::Parser(std::shared_ptr<Lexer> _lexer) : m_lexer(_lexer) {
-    m_symbolTable = std::shared_ptr<SymbolTable>(new SymbolTable);
+    m_context = std::shared_ptr<Context>(new Context {
+        std::shared_ptr<SymbolTable>(new SymbolTable)
+    });
 }
 
 std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
     auto idNode = identifier();
-    auto node = new ASTAggregateNode(idNode, m_symbolTable, m_lexer->getLine(), m_lexer->getColumn());
+    auto node = new ASTAggregateNode(idNode, m_context, m_lexer->getLine(), m_lexer->getColumn());
     return std::shared_ptr<ASTAggregateNode>(node);
 }
 
@@ -62,7 +64,7 @@ std::shared_ptr<ASTDeclarationNode> Parser::sphere() {
     checkNextToken(TokenType::RPAREN);
     checkNextToken(TokenType::SEMICOLON);
 
-    auto node = new ASTDeclarationNode(idNode, m_symbolTable, args, TokenType::SPHERE, m_lexer->getLine(), m_lexer->getColumn());
+    auto node = new ASTDeclarationNode(idNode, m_context, args, TokenType::SPHERE, m_lexer->getLine(), m_lexer->getColumn());
 
     return std::shared_ptr<ASTDeclarationNode>(node);
 }
@@ -76,7 +78,7 @@ std::shared_ptr<ASTDeclarationNode> Parser::cube() {
     checkNextToken(TokenType::RPAREN);
     checkNextToken(TokenType::SEMICOLON);
 
-    auto node = new ASTDeclarationNode(idNode, m_symbolTable, args, TokenType::CUBE, m_lexer->getLine(), m_lexer->getColumn());
+    auto node = new ASTDeclarationNode(idNode, m_context, args, TokenType::CUBE, m_lexer->getLine(), m_lexer->getColumn());
 
     return std::shared_ptr<ASTDeclarationNode>(node);
 }
