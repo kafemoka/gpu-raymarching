@@ -6,6 +6,8 @@
 #include "context.h"
 
 class ASTNode {
+public:
+    std::vector<std::shared_ptr<ASTNode>> getChilds() { return m_childs; }
 protected:
     std::vector<std::shared_ptr<ASTNode>> m_childs;
 };
@@ -26,6 +28,7 @@ public:
 class AST {
 public:
     AST(std::shared_ptr<ASTStatementsNode> _root) : m_root(_root) {}
+    std::shared_ptr<ASTStatementsNode> getRoot() { return m_root; }
 protected:
     std::shared_ptr<ASTStatementsNode> m_root;
 };

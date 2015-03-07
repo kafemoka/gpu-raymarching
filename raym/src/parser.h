@@ -51,6 +51,7 @@ private:
 
     Token peek();
     void readLookAhead();
+    void readNext();
     void appendToken(std::string& _lexeme);
 
     Token m_token;

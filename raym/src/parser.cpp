@@ -86,11 +86,8 @@ std::shared_ptr<ASTDeclarationNode> Parser::cube() {
 bool Parser::checkNextToken(TokenType _type, bool _skipSpaces) {
     readLookAhead();
 
-    if(_skipSpaces) {
-        // move until non-space token
-        while(peek().m_type == TokenType::SPACE) {
-            readLookAhead();
-        }
+    if(_skipSpaces && peek().m_type == TokenType::SPACE) {
+        readNext();
     }
 
     // stack errors
@@ -118,7 +115,7 @@ std::queue<std::string> Parser::getErrors() {
 std::shared_ptr<ASTStatementsNode> Parser::statements() {
     std::shared_ptr<ASTStatementsNode> stmts(new ASTStatementsNode);
 
-    readLookAhead();
+    readNext();
 
     while(peek().m_type != TokenType::ILLEGAL) {
 
@@ -163,6 +160,14 @@ std::shared_ptr<ASTStatementsNode> Parser::statements() {
 
 Token Parser::peek() {
     return m_token;
+}
+
+void Parser::readNext() {
+    readLookAhead();
+
+    while(peek().m_type == TokenType::SPACE) {
+        readLookAhead();
+    }
 }
 
 void Parser::readLookAhead() {
