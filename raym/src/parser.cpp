@@ -4,6 +4,8 @@ Parser::Parser(std::shared_ptr<Lexer> _lexer) : m_lexer(_lexer) {
     m_context = std::shared_ptr<Context>(new Context {
         std::shared_ptr<SymbolTable>(new SymbolTable)
     });
+
+    m_abort = false;
 }
 
 std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
@@ -14,6 +16,10 @@ std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
 
 void Parser::raymarch() {
 
+}
+
+void Parser::abort() {
+    m_abort = true;
 }
 
 std::shared_ptr<ASTValueNode> Parser::position() {
@@ -49,6 +55,15 @@ void Parser::appendToken(std::string& _lexeme) {
 std::shared_ptr<ASTValueNode> Parser::identifier() {
     checkNextToken(TokenType::SPACE, false);
     checkNextToken(TokenType::IDENTIFIER);
+
+    std::string lexeme = peek().m_lexeme;
+
+    if(m_context->m_symbolTable->contains(lexeme)) {
+        m_errors.push("Redefinition of symbol " + lexeme);
+        abort();
+        return nullptr;
+    }
+
     return std::shared_ptr<ASTValueNode>(new ASTValueNode(peek().m_lexeme));
 }
 
@@ -102,6 +117,7 @@ bool Parser::checkNextToken(TokenType _type, bool _skipSpaces) {
 
         error += " at line " + std::to_string(m_lexer->getLine()) + ", column " + std::to_string(m_lexer->getColumn());
         m_errors.push(error);
+        abort();
         return false;
     }
 
@@ -117,7 +133,7 @@ std::shared_ptr<ASTStatementsNode> Parser::statements() {
 
     readNext();
 
-    while(peek().m_type != TokenType::ILLEGAL) {
+    while(peek().m_type != TokenType::ILLEGAL && !m_abort) {
 
         // parse statements
         switch(peek().m_type) {

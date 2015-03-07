@@ -39,6 +39,7 @@ public:
     std::shared_ptr<AST> parse();
 
 private:
+    void abort();
     void raymarch();
     std::shared_ptr<ASTValueNode> identifier();
     std::shared_ptr<ASTAggregateNode> aggregate();
@@ -54,6 +55,7 @@ private:
     void readNext();
     void appendToken(std::string& _lexeme);
 
+    bool m_abort;
     Token m_token;
     Token m_last;
     std::shared_ptr<Lexer> m_lexer;
