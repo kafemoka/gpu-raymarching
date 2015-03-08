@@ -3,14 +3,15 @@
 #include "parser.h"
 #include <iostream>
 
-std::string raymShader = R"END(
-
-    Sphere sphere(vec3(0.0, 0.0, 0.0), 10.0);
-    Cube cube(vec3(10.0, 20.0, 0.0));
-
-)END";
 
 TEST_CASE("[Checks arguments of constructed objects node]", "[Parser]") {
+    std::string raymShader = R"END(
+
+        Sphere sphere(vec3(0.0, 0.0, 0.0), 10.0);
+        Cube cube(vec3(10.0, 20.0, 0.0));
+
+    )END";
+
     std::shared_ptr<Lexer> lexer(new Lexer());
 
     lexer->init(raymShader);
@@ -38,5 +39,25 @@ TEST_CASE("[Checks arguments of constructed objects node]", "[Parser]") {
     REQUIRE(arg1Sphere->getValue() == "vec3(0.0,0.0,0.0)");
     REQUIRE(arg2Sphere->getValue() == "10.0");
     REQUIRE(arg1Cube->getValue() == "vec3(10.0,20.0,0.0)");
+}
+
+TEST_CASE("[Checks that two symbols can't be defined by the same identifier]", "[Parser]") {
+    std::string raymShader = R"END(
+        Sphere identifier(vec3(0.0, 0.0, 0.0), 10.0);
+        Cube identifier(vec3(0.0, 0.0, 0.0));
+    )END";
+
+    std::shared_ptr<Lexer> lexer(new Lexer());
+
+    lexer->init(raymShader);
+
+    Parser parser(lexer);
+
+    auto ast = parser.parse();
+    auto cubeStmt = ast->getRoot()->getChilds()[1];
+    auto stmt = std::static_pointer_cast<ASTDeclarationNode>(cubeStmt);
+
+    REQUIRE(stmt == nullptr);
+    REQUIRE(parser.getErrors().front() == "Redefinition of symbol identifier");
 }
 

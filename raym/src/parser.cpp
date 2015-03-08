@@ -71,6 +71,11 @@ std::shared_ptr<ASTDeclarationNode> Parser::sphere() {
     std::vector<std::shared_ptr<ASTValueNode>> args;
 
     auto idNode = identifier();
+
+    if(!idNode) {
+        return nullptr;
+    }
+
     checkNextToken(TokenType::LPAREN);
     args.push_back(position());
     checkNextToken(TokenType::COMMA);
@@ -88,6 +93,11 @@ std::shared_ptr<ASTDeclarationNode> Parser::cube() {
     std::vector<std::shared_ptr<ASTValueNode>> args;
 
     auto idNode = identifier();
+
+    if(!idNode) {
+        return nullptr;
+    }
+
     checkNextToken(TokenType::LPAREN);
     args.push_back(position());
     checkNextToken(TokenType::RPAREN);
