@@ -13,9 +13,7 @@ TEST_CASE("[Checks arguments of constructed objects node]", "[Parser]") {
     )END";
 
     std::shared_ptr<Lexer> lexer(new Lexer());
-
     lexer->init(raymShader);
-
     Parser parser(lexer);
 
     auto ast = parser.parse();
@@ -48,9 +46,7 @@ TEST_CASE("[Checks that two symbols can't be defined by the same identifier]", "
     )END";
 
     std::shared_ptr<Lexer> lexer(new Lexer());
-
     lexer->init(raymShader);
-
     Parser parser(lexer);
 
     auto ast = parser.parse();
@@ -59,5 +55,35 @@ TEST_CASE("[Checks that two symbols can't be defined by the same identifier]", "
 
     REQUIRE(stmt == nullptr);
     REQUIRE(parser.getErrors().front() == "Redefinition of symbol identifier");
+}
+
+TEST_CASE("[]", "[]") {
+    std::string raymShader = R"END(
+
+        Sphere sphere1(vec3(0.0, 0.0, 0.0), 10.0);
+        Sphere sphere2(vec3(0.0, 0.0, 0.0), 5.0);
+        Cube cube1(vec3(10.0, 20.0, 0.0));
+        Cube cube2(vec3(0.0, 0.0, 0.0));
+
+        Object o1 ;
+
+        o1 = spere1 + sphere2;
+
+        Object o2 = o1 + (cube1 - cube2);
+
+        raymarch(100.0, o2);
+
+    )END";
+
+    std::shared_ptr<Lexer> lexer(new Lexer());
+    lexer->init(raymShader);
+    Parser parser(lexer);
+
+    auto ast = parser.parse();
+
+    while(parser.getErrors().size() > 0) {
+ //       std::cout << parser.getErrors().front() << std::endl;
+        parser.getErrors().pop();
+    }
 }
 

@@ -10,8 +10,24 @@ Parser::Parser(std::shared_ptr<Lexer> _lexer) : m_lexer(_lexer) {
 
 std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
     auto idNode = identifier();
-    auto node = new ASTAggregateNode(idNode, m_context, m_lexer->getLine(), m_lexer->getColumn());
-    return std::shared_ptr<ASTAggregateNode>(node);
+
+    if(!idNode) {
+        return nullptr;
+    }
+
+    readNext();
+
+    switch(peek().m_type) {
+        case TokenType::SEMICOLON: {
+            auto node = new ASTAggregateNode(idNode, m_context, m_lexer->getLine(), m_lexer->getColumn());
+            return std::shared_ptr<ASTAggregateNode>(node);
+        }
+        case TokenType::ASSIGN: {
+            // TODO : parse expr
+        }
+    }
+
+    return nullptr;
 }
 
 void Parser::raymarch() {
@@ -161,6 +177,10 @@ std::shared_ptr<ASTStatementsNode> Parser::statements() {
             }
             case TokenType::OBJECT: {
                 stmts->addStatement(aggregate());
+                break;
+            }
+            case TokenType::IDENTIFIER: {
+                // TODO : parser expr
                 break;
             }
         }
