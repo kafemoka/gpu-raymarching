@@ -30,6 +30,10 @@ std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
     return nullptr;
 }
 
+std::shared_ptr<ASTExpressionNode> Parser::expression() {
+
+}
+
 void Parser::raymarch() {
 
 }
@@ -180,7 +184,7 @@ std::shared_ptr<ASTStatementsNode> Parser::statements() {
                 break;
             }
             case TokenType::IDENTIFIER: {
-                // TODO : parser expr
+                stmts->addStatement(expression());
                 break;
             }
         }

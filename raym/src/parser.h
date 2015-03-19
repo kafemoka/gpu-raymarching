@@ -43,6 +43,7 @@ private:
     void raymarch();
     std::shared_ptr<ASTValueNode> identifier();
     std::shared_ptr<ASTAggregateNode> aggregate();
+    std::shared_ptr<ASTExpressionNode> expression();
     std::shared_ptr<ASTStatementsNode> statements();
     std::shared_ptr<ASTDeclarationNode> cube();
     std::shared_ptr<ASTDeclarationNode> sphere();

@@ -30,6 +30,8 @@ TEST_CASE("[Checks arguments of constructed objects node]", "[Parser]") {
     auto cube = std::static_pointer_cast<ASTValueNode>(cubeStmt->getChilds()[0]);
     auto arg1Cube = std::static_pointer_cast<ASTValueNode>(stmt2->getChilds()[1]);
 
+    //std::cout << typeid(*sphereStmt.get()).name() << std::endl;
+
     REQUIRE(stmt1 != nullptr);
     REQUIRE(cubeStmt != nullptr);
     REQUIRE(sphere->getValue() == "sphere");
@@ -81,9 +83,9 @@ TEST_CASE("[]", "[]") {
 
     auto ast = parser.parse();
 
-    while(parser.getErrors().size() > 0) {
- //       std::cout << parser.getErrors().front() << std::endl;
-        parser.getErrors().pop();
-    }
+    //while(parser.getErrors().size() > 0) {
+    //    std::cout << parser.getErrors().front() << std::endl;
+    //    parser.getErrors().pop();
+    //}
 }
 

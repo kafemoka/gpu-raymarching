@@ -7,7 +7,7 @@
 
 class ASTNode {
 public:
-    std::vector<std::shared_ptr<ASTNode>> getChilds() { return m_childs; }
+    virtual std::vector<std::shared_ptr<ASTNode>> getChilds() { return m_childs; }
 protected:
     std::vector<std::shared_ptr<ASTNode>> m_childs;
 };
@@ -37,6 +37,7 @@ class ASTValueNode : public ASTNode {
 public:
     ASTValueNode(std::string _value) : m_value(_value) {}
     std::string getValue() const { return m_value; };
+    void evaluate(std::shared_ptr<Context> _context);
 private:
     std::string m_value;
 };
@@ -59,3 +60,23 @@ public:
         int _line, int _column);
 };
 
+class ASTExpressionNode : public ASTStatementNode {
+public:
+    virtual void evaluate(std::shared_ptr<Context> _context) = 0;
+};
+
+class ASTOperatorNode : public ASTNode {
+protected:
+    std::shared_ptr<ASTNode> m_left;
+    std::shared_ptr<ASTNode> m_right;
+
+public:
+    ASTOperatorNode(std::shared_ptr<ASTNode> _left,
+                    std::shared_ptr<ASTNode> _right) :
+    m_left(_left), m_right(_right) {};
+};
+
+class ASTOperatorUnionNode : public ASTOperatorNode {
+public:
+
+};

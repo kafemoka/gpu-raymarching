@@ -29,3 +29,7 @@ ASTAggregateNode::ASTAggregateNode(std::shared_ptr<ASTValueNode> _id,
 void ASTStatementsNode::addStatement(std::shared_ptr<ASTStatementNode> _stmt) {
     m_childs.push_back(_stmt);
 }
+
+void ASTValueNode::evaluate(std::shared_ptr<Context> _context) {
+    // TODO
+}
