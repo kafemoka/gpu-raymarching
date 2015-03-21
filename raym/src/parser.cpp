@@ -8,7 +8,7 @@ Parser::Parser(std::shared_ptr<Lexer> _lexer) : m_lexer(_lexer) {
     m_abort = false;
 }
 
-std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
+std::shared_ptr<ASTStatementNode> Parser::aggregate() {
     auto idNode = identifier();
 
     if(!idNode) {
@@ -23,7 +23,14 @@ std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
             return std::shared_ptr<ASTAggregateNode>(node);
         }
         case TokenType::ASSIGN: {
-            // TODO : parse expr
+            auto rightOperand = expression();
+            auto atomicId = std::shared_ptr<ASTAtomicNode>(new
+                ASTAtomicNode(idNode)
+            );
+            auto node = new ASTOperatorAssignNode(atomicId, rightOperand);
+            return std::shared_ptr<ASTExpressionStatementNode>(
+                new ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode>(node), m_context)
+            );
         }
     }
 
@@ -31,11 +38,17 @@ std::shared_ptr<ASTAggregateNode> Parser::aggregate() {
 }
 
 std::shared_ptr<ASTExpressionNode> Parser::expression() {
+    return nullptr;
+}
 
+std::shared_ptr<ASTExpressionStatementNode> Parser::expressionStmt() {
+    auto id = nullptr;
+    return std::shared_ptr<ASTExpressionStatementNode>(
+        new ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode>(id), m_context)
+    );
 }
 
 void Parser::raymarch() {
-
 }
 
 void Parser::abort() {
@@ -184,7 +197,7 @@ std::shared_ptr<ASTStatementsNode> Parser::statements() {
                 break;
             }
             case TokenType::IDENTIFIER: {
-                stmts->addStatement(expression());
+                stmts->addStatement(expressionStmt());
                 break;
             }
         }

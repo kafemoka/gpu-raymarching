@@ -42,7 +42,8 @@ private:
     void abort();
     void raymarch();
     std::shared_ptr<ASTValueNode> identifier();
-    std::shared_ptr<ASTAggregateNode> aggregate();
+    std::shared_ptr<ASTStatementNode> aggregate();
+    std::shared_ptr<ASTExpressionStatementNode> expressionStmt();
     std::shared_ptr<ASTExpressionNode> expression();
     std::shared_ptr<ASTStatementsNode> statements();
     std::shared_ptr<ASTDeclarationNode> cube();

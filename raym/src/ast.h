@@ -17,6 +17,7 @@ public:
     ASTStatementNode(std::shared_ptr<Context> _context) : m_context(_context) {}
 protected:
     std::shared_ptr<Context> m_context;
+    virtual void exec();
 };
 
 class ASTStatementsNode : public ASTNode {
@@ -37,7 +38,6 @@ class ASTValueNode : public ASTNode {
 public:
     ASTValueNode(std::string _value) : m_value(_value) {}
     std::string getValue() const { return m_value; };
-    void evaluate(std::shared_ptr<Context> _context);
 private:
     std::string m_value;
 };
@@ -45,38 +45,65 @@ private:
 class ASTDeclarationNode : public ASTStatementNode {
 public:
     ASTDeclarationNode(std::shared_ptr<ASTValueNode> _id,
-            std::shared_ptr<Context> _context,
-            std::vector<std::shared_ptr<ASTValueNode>> _args,
-            TokenType _type,
-            int _line, int _column);
-
-    // void evaluate(std::shared_ptr<ShaderSymbolTable> _shaderSymbols);
+                       std::shared_ptr<Context> _context,
+                       std::vector<std::shared_ptr<ASTValueNode>> _args,
+                       TokenType _type,
+                       int _line, int _column);
 };
 
 class ASTAggregateNode : public ASTStatementNode {
 public:
     ASTAggregateNode(std::shared_ptr<ASTValueNode> _id,
-        std::shared_ptr<Context> _context,
-        int _line, int _column);
+                     std::shared_ptr<Context> _context,
+                     int _line, int _column);
 };
 
-class ASTExpressionNode : public ASTStatementNode {
+class ASTExpressionNode : public ASTNode {
 public:
     virtual void evaluate(std::shared_ptr<Context> _context) = 0;
 };
 
-class ASTOperatorNode : public ASTNode {
+class ASTExpressionStatementNode : public ASTStatementNode {
+public:
+    ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode> _expr,
+                               std::shared_ptr<Context> _context);
+};
+
+class ASTOperatorNode : public ASTExpressionNode {
 protected:
-    std::shared_ptr<ASTNode> m_left;
-    std::shared_ptr<ASTNode> m_right;
+    std::shared_ptr<ASTExpressionNode> getLeftChild(); 
+    std::shared_ptr<ASTExpressionNode> getRightChild();
 
 public:
-    ASTOperatorNode(std::shared_ptr<ASTNode> _left,
-                    std::shared_ptr<ASTNode> _right) :
-    m_left(_left), m_right(_right) {};
+    ASTOperatorNode(std::shared_ptr<ASTExpressionNode> _left,
+                    std::shared_ptr<ASTExpressionNode> _right);
+};
+
+class ASTAtomicNode : public ASTExpressionNode {
+public:
+    ASTAtomicNode(std::shared_ptr<ASTValueNode> _value);
+    void evaluate(std::shared_ptr<Context> _context) override;
+};
+
+class ASTOperatorAssignNode : public ASTOperatorNode {
+public:
+    ASTOperatorAssignNode(std::shared_ptr<ASTExpressionNode> _left,
+                          std::shared_ptr<ASTExpressionNode> _right)
+    : ASTOperatorNode(_left, _right) {}
+    void evaluate(std::shared_ptr<Context> _context) override;
 };
 
 class ASTOperatorUnionNode : public ASTOperatorNode {
 public:
+    void evaluate(std::shared_ptr<Context> _context) override;
+};
 
+class ASTOperatorIntersectNode : public ASTOperatorNode {
+public:
+    void evaluate(std::shared_ptr<Context> _context) override;
+};
+
+class ASTOperatorSubstractNode : public ASTOperatorNode {
+public:
+    void evaluate(std::shared_ptr<Context> _context) override;
 };
