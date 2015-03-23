@@ -119,11 +119,21 @@ void Parser::appendToken(std::string& _lexeme) {
     _lexeme += peek().m_lexeme;
 }
 
-bool Parser::checkSymbol(const std::string& lexeme) {
-    if(m_context->m_symbolTable->contains(lexeme)) {
-        m_errors.push("Undefined symbol " + lexeme);
-        abort();
-        return false;
+bool Parser::checkSymbol(const std::string& _lexeme, bool _shouldExist) {
+    bool inSymbolTable = m_context->m_symbolTable->contains(_lexeme);
+
+    if(_shouldExist) {
+        if(!inSymbolTable) {
+            m_errors.push("Undefined symbol " + _lexeme);
+            abort();
+            return false;
+        }
+    } else {
+        if(inSymbolTable) {
+            m_errors.push("Redefinition of symbol " + _lexeme);
+            abort();
+            return false;
+        }
     }
 
     return true;
@@ -132,7 +142,7 @@ bool Parser::checkSymbol(const std::string& lexeme) {
 std::shared_ptr<ASTAtomicNode> Parser::atomicIdentifier() {
     std::string lexeme = peek().m_lexeme;
 
-    if(!checkSymbol(lexeme)) {
+    if(!checkSymbol(lexeme, true)) {
         return nullptr;
     }
 
@@ -146,7 +156,7 @@ std::shared_ptr<ASTValueNode> Parser::identifier() {
 
     std::string lexeme = peek().m_lexeme;
 
-    if(!checkSymbol(lexeme)) {
+    if(!checkSymbol(lexeme, false)) {
         return nullptr;
     }
 
