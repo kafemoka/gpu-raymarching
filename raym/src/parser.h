@@ -41,10 +41,13 @@ public:
 private:
     void abort();
     void raymarch();
+    void unexpectedToken(TokenType _requiredType);
+    std::shared_ptr<ASTAtomicNode> atomicIdentifier();
     std::shared_ptr<ASTValueNode> identifier();
     std::shared_ptr<ASTStatementNode> aggregate();
     std::shared_ptr<ASTExpressionStatementNode> expressionStmt();
     std::shared_ptr<ASTExpressionNode> expression();
+    std::shared_ptr<ASTExpressionNode> expressionF();
     std::shared_ptr<ASTStatementsNode> statements();
     std::shared_ptr<ASTDeclarationNode> cube();
     std::shared_ptr<ASTDeclarationNode> sphere();

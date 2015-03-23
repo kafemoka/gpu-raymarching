@@ -23,7 +23,7 @@ std::shared_ptr<ASTStatementNode> Parser::aggregate() {
             return std::shared_ptr<ASTAggregateNode>(node);
         }
         case TokenType::ASSIGN: {
-            auto rightOperand = expression();
+            auto rightOperand = expressionF();
             auto atomicId = std::shared_ptr<ASTAtomicNode>(new
                 ASTAtomicNode(idNode)
             );
@@ -37,15 +37,49 @@ std::shared_ptr<ASTStatementNode> Parser::aggregate() {
     return nullptr;
 }
 
+std::shared_ptr<ASTExpressionNode> Parser::expressionF() {
+    readNext();
+
+    if(peek().m_type == TokenType::LPAREN) {
+        std::shared_ptr<ASTExpressionNode> expr = expression();
+        checkNextToken(TokenType::RPAREN);
+        return expr;
+    }
+
+    if(peek().m_type != TokenType::IDENTIFIER) {
+        unexpectedToken(TokenType::IDENTIFIER);
+        return nullptr;
+    }
+
+    auto atomicId = atomicIdentifier();
+
+    readNext();
+
+    if(peek().m_type == TokenType::INTERSECT) {
+
+    }
+}
+
 std::shared_ptr<ASTExpressionNode> Parser::expression() {
-    return nullptr;
+    auto atomicId = atomicIdentifier();
+
+    readLookAhead();
+
+    checkNextToken(TokenType::ASSIGN);
+
+    auto rightOperand = expressionF();
+    auto assignNode = new ASTOperatorAssignNode(atomicId, rightOperand);
+    return std::shared_ptr<ASTOperatorAssignNode>(assignNode);
 }
 
 std::shared_ptr<ASTExpressionStatementNode> Parser::expressionStmt() {
-    auto id = nullptr;
-    return std::shared_ptr<ASTExpressionStatementNode>(
-        new ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode>(id), m_context)
+    auto expr = std::shared_ptr<ASTExpressionStatementNode>(
+         new ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode>(expression()), m_context)
     );
+
+    checkNextToken(TokenType::SEMICOLON);
+
+    return expr;
 }
 
 void Parser::raymarch() {
@@ -83,6 +117,19 @@ std::shared_ptr<ASTValueNode> Parser::position() {
 
 void Parser::appendToken(std::string& _lexeme) {
     _lexeme += peek().m_lexeme;
+}
+
+std::shared_ptr<ASTAtomicNode> Parser::atomicIdentifier() {
+    std::string lexeme = peek().m_lexeme;
+
+    if(!m_context->m_symbolTable->contains(lexeme)) {
+        m_errors.push("Undefined symbol " + lexeme);
+        abort();
+        return nullptr;
+    }
+
+    auto id = std::shared_ptr<ASTValueNode>(new ASTValueNode(peek().m_lexeme));
+    return std::shared_ptr<ASTAtomicNode>(new ASTAtomicNode(id));
 }
 
 std::shared_ptr<ASTValueNode> Parser::identifier() {
@@ -141,6 +188,21 @@ std::shared_ptr<ASTDeclarationNode> Parser::cube() {
     return std::shared_ptr<ASTDeclarationNode>(node);
 }
 
+void Parser::unexpectedToken(TokenType _requiredType) {
+    std::string error;
+
+    if(peek().m_lexeme != "") {
+        error += "Unexpected " + peek().m_lexeme;
+    } else {
+        error += "Unexpected token " + tokenType(_requiredType);
+    }
+
+    error += " at line " + std::to_string(m_lexer->getLine()) + ", column " + std::to_string(m_lexer->getColumn());
+    m_errors.push(error);
+
+    abort();
+}
+
 bool Parser::checkNextToken(TokenType _type, bool _skipSpaces) {
     readLookAhead();
 
@@ -150,17 +212,7 @@ bool Parser::checkNextToken(TokenType _type, bool _skipSpaces) {
 
     // stack errors
     if(_type != peek().m_type) {
-        std::string error;
-
-        if(peek().m_lexeme != "") {
-            error += "Unexpected " + peek().m_lexeme;
-        } else {
-            error += "Unexpected token " + tokenType(_type);
-        }
-
-        error += " at line " + std::to_string(m_lexer->getLine()) + ", column " + std::to_string(m_lexer->getColumn());
-        m_errors.push(error);
-        abort();
+        unexpectedToken(_type);
         return false;
     }
 
