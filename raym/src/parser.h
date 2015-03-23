@@ -42,6 +42,7 @@ private:
     void abort();
     void raymarch();
     void unexpectedToken(TokenType _requiredType);
+    bool checkSymbol(const std::string& lexeme);
     std::shared_ptr<ASTAtomicNode> atomicIdentifier();
     std::shared_ptr<ASTValueNode> identifier();
     std::shared_ptr<ASTStatementNode> aggregate();
