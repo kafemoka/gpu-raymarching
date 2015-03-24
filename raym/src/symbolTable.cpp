@@ -9,6 +9,6 @@ bool SymbolTable::add(const SymbolTableEntry& _entry) {
     return false;
 }
 
-bool SymbolTable::contains(std::string _lexeme) {
+bool SymbolTable::contains(const std::string& _lexeme) {
     return m_symbols.find(_lexeme) != m_symbols.end();
 }

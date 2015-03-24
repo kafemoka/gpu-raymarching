@@ -48,7 +48,9 @@ private:
     std::shared_ptr<ASTStatementNode> aggregate();
     std::shared_ptr<ASTExpressionStatementNode> expressionStmt();
     std::shared_ptr<ASTExpressionNode> expression();
+    std::shared_ptr<ASTExpressionNode> expressionT();
     std::shared_ptr<ASTExpressionNode> expressionF();
+    std::shared_ptr<ASTExpressionNode> expressionE();
     std::shared_ptr<ASTStatementsNode> statements();
     std::shared_ptr<ASTDeclarationNode> cube();
     std::shared_ptr<ASTDeclarationNode> sphere();

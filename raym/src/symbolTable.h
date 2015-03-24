@@ -17,7 +17,7 @@ public:
     SymbolTable() {}
 
     bool add(const SymbolTableEntry& _entry);
-    bool contains(std::string _lexeme);
+    bool contains(const std::string& _lexeme);
 
 private:
     std::map<std::string, SymbolTableEntry> m_symbols;

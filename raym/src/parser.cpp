@@ -23,7 +23,7 @@ std::shared_ptr<ASTStatementNode> Parser::aggregate() {
             return std::shared_ptr<ASTAggregateNode>(node);
         }
         case TokenType::ASSIGN: {
-            auto rightOperand = expressionF();
+            auto rightOperand = expressionE();
             auto atomicId = std::shared_ptr<ASTAtomicNode>(new
                 ASTAtomicNode(idNode)
             );
@@ -38,26 +38,50 @@ std::shared_ptr<ASTStatementNode> Parser::aggregate() {
 }
 
 std::shared_ptr<ASTExpressionNode> Parser::expressionF() {
-    readNext();
 
     if(peek().m_type == TokenType::LPAREN) {
-        std::shared_ptr<ASTExpressionNode> expr = expression();
+        std::shared_ptr<ASTExpressionNode> expr = expressionE();
         checkNextToken(TokenType::RPAREN);
         return expr;
     }
 
-    if(peek().m_type != TokenType::IDENTIFIER) {
-        unexpectedToken(TokenType::IDENTIFIER);
-        return nullptr;
+    return atomicIdentifier();
+}
+
+std::shared_ptr<ASTExpressionNode> Parser::expressionE() {
+    auto expr = expressionT();
+
+    if(expr != nullptr) {
+        // add this node
     }
 
-    auto atomicId = atomicIdentifier();
+    switch(peek().m_type) {
+        case TokenType::UNION: {
+            auto rightOperand = expressionE();
+            break;
+        }
+
+        case TokenType::SUBSTRACT: {
+            auto rightOperand = expressionE();
+            break;
+        }
+    }
+}
+
+std::shared_ptr<ASTExpressionNode> Parser::expressionT() {
+    auto leftOperand = expressionF();
 
     readNext();
 
-    if(peek().m_type == TokenType::INTERSECT) {
-
+    switch(peek().m_type) {
+        case TokenType::INTERSECT: {
+            auto rightOperand = expressionF();
+            // return left + right operand
+            break;
+        }
     }
+
+    return leftOperand;
 }
 
 std::shared_ptr<ASTExpressionNode> Parser::expression() {
@@ -67,7 +91,8 @@ std::shared_ptr<ASTExpressionNode> Parser::expression() {
 
     checkNextToken(TokenType::ASSIGN);
 
-    auto rightOperand = expressionF();
+    readNext();
+    auto rightOperand = expressionE();
     auto assignNode = new ASTOperatorAssignNode(atomicId, rightOperand);
     return std::shared_ptr<ASTOperatorAssignNode>(assignNode);
 }
