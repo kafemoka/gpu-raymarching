@@ -95,15 +95,24 @@ public:
 
 class ASTOperatorUnionNode : public ASTOperatorNode {
 public:
+    ASTOperatorUnionNode(std::shared_ptr<ASTExpressionNode> _left,
+                        std::shared_ptr<ASTExpressionNode> _right)
+    : ASTOperatorNode(_left, _right) {}
     void evaluate(std::shared_ptr<Context> _context) override;
 };
 
 class ASTOperatorIntersectNode : public ASTOperatorNode {
 public:
+    ASTOperatorIntersectNode(std::shared_ptr<ASTExpressionNode> _left,
+                             std::shared_ptr<ASTExpressionNode> _right)
+    : ASTOperatorNode(_left, _right) {}
     void evaluate(std::shared_ptr<Context> _context) override;
 };
 
 class ASTOperatorSubstractNode : public ASTOperatorNode {
 public:
+    ASTOperatorSubstractNode(std::shared_ptr<ASTExpressionNode> _left,
+                             std::shared_ptr<ASTExpressionNode> _right)
+    : ASTOperatorNode(_left, _right) {}
     void evaluate(std::shared_ptr<Context> _context) override;
 };

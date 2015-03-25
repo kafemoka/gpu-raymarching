@@ -35,7 +35,8 @@ void ASTStatementsNode::addStatement(std::shared_ptr<ASTStatementNode> _stmt) {
 
 ASTOperatorNode::ASTOperatorNode(std::shared_ptr<ASTExpressionNode> _left,
                                  std::shared_ptr<ASTExpressionNode> _right) {
-
+    m_childs.push_back(_left);
+    m_childs.push_back(_right);
 }
 
 std::shared_ptr<ASTExpressionNode> ASTOperatorNode::getLeftChild() {

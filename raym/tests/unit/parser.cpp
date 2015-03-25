@@ -69,7 +69,7 @@ TEST_CASE("[]", "[]") {
 
         Object o1 ;
 
-        o1 = sphere1 + sphere2;
+        o1 = (sphere1 + sphere2) / cube1;
 
         Object o2 = o1 + (cube1 - cube2);
 

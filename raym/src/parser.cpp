@@ -40,6 +40,7 @@ std::shared_ptr<ASTStatementNode> Parser::aggregate() {
 std::shared_ptr<ASTExpressionNode> Parser::expressionF() {
 
     if(peek().m_type == TokenType::LPAREN) {
+        readNext();
         std::shared_ptr<ASTExpressionNode> expr = expressionE();
         checkNextToken(TokenType::RPAREN);
         return expr;
@@ -49,23 +50,27 @@ std::shared_ptr<ASTExpressionNode> Parser::expressionF() {
 }
 
 std::shared_ptr<ASTExpressionNode> Parser::expressionE() {
-    auto expr = expressionT();
-
-    if(expr != nullptr) {
-        // add this node
-    }
+    auto leftOperand = expressionT();
 
     switch(peek().m_type) {
         case TokenType::UNION: {
+            readNext();
             auto rightOperand = expressionE();
-            break;
+            return std::shared_ptr<ASTOperatorUnionNode>(
+                new ASTOperatorUnionNode(leftOperand, rightOperand)
+            );
         }
 
         case TokenType::SUBSTRACT: {
+            readNext();
             auto rightOperand = expressionE();
-            break;
+            return std::shared_ptr<ASTOperatorSubstractNode>(
+                new ASTOperatorSubstractNode(leftOperand, rightOperand)
+            );
         }
     }
+    
+    return leftOperand;
 }
 
 std::shared_ptr<ASTExpressionNode> Parser::expressionT() {
@@ -76,8 +81,9 @@ std::shared_ptr<ASTExpressionNode> Parser::expressionT() {
     switch(peek().m_type) {
         case TokenType::INTERSECT: {
             auto rightOperand = expressionF();
-            // return left + right operand
-            break;
+            return std::shared_ptr<ASTOperatorIntersectNode>(
+                new ASTOperatorIntersectNode(leftOperand, rightOperand)
+            );
         }
     }
 
@@ -102,6 +108,7 @@ std::shared_ptr<ASTExpressionStatementNode> Parser::expressionStmt() {
          new ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode>(expression()), m_context)
     );
 
+    // change to check token
     checkNextToken(TokenType::SEMICOLON);
 
     return expr;
