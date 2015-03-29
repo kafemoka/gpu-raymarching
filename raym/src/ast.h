@@ -4,6 +4,7 @@
 #include <memory>
 #include <iostream>
 #include "context.h"
+#include "raymarchObject.h"
 
 class ASTNode {
 public:
@@ -49,6 +50,9 @@ public:
                        std::vector<std::shared_ptr<ASTValueNode>> _args,
                        TokenType _type,
                        int _line, int _column);
+    void exec() override;
+private:
+    void createObject(TokenType _type, const std::string& _name);
 };
 
 class ASTAggregateNode : public ASTStatementNode {

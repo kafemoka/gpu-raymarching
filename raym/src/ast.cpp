@@ -48,7 +48,35 @@ std::shared_ptr<ASTExpressionNode> ASTOperatorNode::getRightChild() {
 }
 
 void ASTStatementNode::exec() {
-    
+
+}
+
+void ASTDeclarationNode::exec() {
+    auto identifier = std::dynamic_pointer_cast<ASTValueNode>(m_childs[0]);
+    const std::string& lexeme = identifier->getValue();
+    TokenType symbolType = m_context->m_symbolTable->getSymbolType(lexeme);
+
+    createObject(symbolType, lexeme);
+}
+
+void ASTDeclarationNode::createObject(TokenType _type, const std::string& _name) {
+    auto pos = std::dynamic_pointer_cast<ASTValueNode>(m_childs[1]);
+
+    switch (_type) {
+        case TokenType::SPHERE: {
+            auto radius = std::dynamic_pointer_cast<ASTValueNode>(m_childs[2]);
+            RaymarchSphere sphere(_name, pos->getValue(), radius->getValue());
+            break;
+        }
+
+        case TokenType::CUBE: {
+
+            break;
+        }
+
+        default:
+            break;
+    }
 }
 
 ASTAtomicNode::ASTAtomicNode(std::shared_ptr<ASTValueNode> _value) {
