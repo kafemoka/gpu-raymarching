@@ -22,12 +22,16 @@ std::shared_ptr<ASTStatementNode> Parser::aggregate() {
             auto node = new ASTAggregateNode(idNode, m_context, m_lexer->getLine(), m_lexer->getColumn());
             return std::shared_ptr<ASTAggregateNode>(node);
         }
+
         case TokenType::ASSIGN: {
             readNext();
+
             auto rightOperand = expressionE();
+
             auto atomicId = std::shared_ptr<ASTAtomicNode>(new
                 ASTAtomicNode(idNode)
             );
+
             auto node = new ASTOperatorAssignNode(atomicId, rightOperand);
             return std::shared_ptr<ASTExpressionStatementNode>(
                 new ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode>(node), m_context)
@@ -42,9 +46,11 @@ std::shared_ptr<ASTExpressionNode> Parser::expressionF() {
 
     if(peek().m_type == TokenType::LPAREN) {
         readNext();
+
         checkToken(TokenType::RPAREN);
         std::shared_ptr<ASTExpressionNode> expr = expressionE();
         checkNextToken(TokenType::RPAREN);
+
         return expr;
     }
 
@@ -60,6 +66,7 @@ std::shared_ptr<ASTExpressionNode> Parser::expressionE() {
     switch(peek().m_type) {
         case TokenType::UNION: {
             readNext();
+
             auto rightOperand = expressionE();
             return std::shared_ptr<ASTOperatorUnionNode>(
                 new ASTOperatorUnionNode(leftOperand, rightOperand)
@@ -68,6 +75,7 @@ std::shared_ptr<ASTExpressionNode> Parser::expressionE() {
 
         case TokenType::SUBSTRACT: {
             readNext();
+
             auto rightOperand = expressionE();
             return std::shared_ptr<ASTOperatorSubstractNode>(
                 new ASTOperatorSubstractNode(leftOperand, rightOperand)
@@ -84,6 +92,7 @@ std::shared_ptr<ASTExpressionNode> Parser::expressionT() {
     switch(peek().m_type) {
         case TokenType::INTERSECT: {
             readNext();
+
             auto rightOperand = expressionF();
             return std::shared_ptr<ASTOperatorIntersectNode>(
                 new ASTOperatorIntersectNode(leftOperand, rightOperand)
@@ -113,8 +122,7 @@ std::shared_ptr<ASTExpressionStatementNode> Parser::expressionStmt() {
          new ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode>(expression()), m_context)
     );
 
-    // change to check token
-    checkNextToken(TokenType::SEMICOLON);
+    checkToken(TokenType::SEMICOLON);
 
     return expr;
 }
@@ -217,7 +225,8 @@ std::shared_ptr<ASTDeclarationNode> Parser::sphere() {
     checkNextToken(TokenType::RPAREN);
     checkNextToken(TokenType::SEMICOLON);
 
-    auto node = new ASTDeclarationNode(idNode, m_context, args, TokenType::SPHERE, m_lexer->getLine(), m_lexer->getColumn());
+    auto node = new ASTDeclarationNode(idNode, m_context, args, TokenType::SPHERE,
+                                       m_lexer->getLine(), m_lexer->getColumn());
 
     return std::shared_ptr<ASTDeclarationNode>(node);
 }
@@ -236,7 +245,8 @@ std::shared_ptr<ASTDeclarationNode> Parser::cube() {
     checkNextToken(TokenType::RPAREN);
     checkNextToken(TokenType::SEMICOLON);
 
-    auto node = new ASTDeclarationNode(idNode, m_context, args, TokenType::CUBE, m_lexer->getLine(), m_lexer->getColumn());
+    auto node = new ASTDeclarationNode(idNode, m_context, args, TokenType::CUBE,
+                                       m_lexer->getLine(), m_lexer->getColumn());
 
     return std::shared_ptr<ASTDeclarationNode>(node);
 }
@@ -250,7 +260,9 @@ void Parser::unexpectedToken(TokenType _requiredType) {
         error += "Unexpected token " + tokenType(_requiredType);
     }
 
-    error += " at line " + std::to_string(m_lexer->getLine()) + ", column " + std::to_string(m_lexer->getColumn());
+    error += " at line " + std::to_string(m_lexer->getLine());
+    error += ", column " + std::to_string(m_lexer->getColumn());
+
     m_errors.push(error);
 
     abort();

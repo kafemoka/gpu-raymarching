@@ -84,6 +84,16 @@ TEST_CASE("[]", "[]") {
     auto ast = parser.parse();
     auto errors = parser.getErrors();
 
+    REQUIRE(ast->getRoot()->getChilds().size() == 7);
+
+    for(auto child : ast->getRoot()->getChilds()) {
+        auto stmt = std::static_pointer_cast<ASTStatementNode>(child);
+        REQUIRE(stmt != nullptr);
+        if(stmt) {
+            stmt->exec();
+        }
+    }
+
     while(errors.size() > 0) {
         std::cout << errors.front() << std::endl;
         errors.pop();

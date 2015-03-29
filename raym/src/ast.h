@@ -15,9 +15,9 @@ protected:
 class ASTStatementNode : public ASTNode {
 public:
     ASTStatementNode(std::shared_ptr<Context> _context) : m_context(_context) {}
+    virtual void exec();
 protected:
     std::shared_ptr<Context> m_context;
-    virtual void exec();
 };
 
 class ASTStatementsNode : public ASTNode {
