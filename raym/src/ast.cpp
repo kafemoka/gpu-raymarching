@@ -47,16 +47,24 @@ std::shared_ptr<ASTExpressionNode> ASTOperatorNode::getRightChild() {
     return std::dynamic_pointer_cast<ASTExpressionNode>(m_childs[1]);
 }
 
-void ASTStatementNode::exec() {
-
-}
-
 void ASTDeclarationNode::exec() {
     auto identifier = std::dynamic_pointer_cast<ASTValueNode>(m_childs[0]);
     const std::string& lexeme = identifier->getValue();
     TokenType symbolType = m_context->m_symbolTable->getSymbolType(lexeme);
 
     createObject(symbolType, lexeme);
+}
+
+void ASTExpressionStatementNode::exec() {
+    
+}
+
+void ASTAggregateNode::exec() {
+    
+}
+
+void ASTAggregateNode::createObject(const std::string& _name) {
+
 }
 
 void ASTDeclarationNode::createObject(TokenType _type, const std::string& _name) {

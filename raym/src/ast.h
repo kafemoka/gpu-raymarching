@@ -16,7 +16,7 @@ protected:
 class ASTStatementNode : public ASTNode {
 public:
     ASTStatementNode(std::shared_ptr<Context> _context) : m_context(_context) {}
-    virtual void exec();
+    virtual void exec() = 0;
 protected:
     std::shared_ptr<Context> m_context;
 };
@@ -60,6 +60,9 @@ public:
     ASTAggregateNode(std::shared_ptr<ASTValueNode> _id,
                      std::shared_ptr<Context> _context,
                      int _line, int _column);
+    void exec() override;
+private:
+    void createObject(const std::string& _name);
 };
 
 class ASTExpressionNode : public ASTNode {
@@ -71,6 +74,7 @@ class ASTExpressionStatementNode : public ASTStatementNode {
 public:
     ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode> _expr,
                                std::shared_ptr<Context> _context);
+    void exec() override;
 };
 
 class ASTOperatorNode : public ASTExpressionNode {
