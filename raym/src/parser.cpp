@@ -47,9 +47,9 @@ std::shared_ptr<ASTExpressionNode> Parser::expressionF() {
     if(peek().m_type == TokenType::LPAREN) {
         readNext();
 
-        checkToken(TokenType::RPAREN);
         std::shared_ptr<ASTExpressionNode> expr = expressionE();
-        checkNextToken(TokenType::RPAREN);
+        checkToken(TokenType::RPAREN);
+        readNext();
 
         return expr;
     }
