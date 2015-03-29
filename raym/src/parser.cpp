@@ -23,6 +23,7 @@ std::shared_ptr<ASTStatementNode> Parser::aggregate() {
             return std::shared_ptr<ASTAggregateNode>(node);
         }
         case TokenType::ASSIGN: {
+            readNext();
             auto rightOperand = expressionE();
             auto atomicId = std::shared_ptr<ASTAtomicNode>(new
                 ASTAtomicNode(idNode)
@@ -41,12 +42,16 @@ std::shared_ptr<ASTExpressionNode> Parser::expressionF() {
 
     if(peek().m_type == TokenType::LPAREN) {
         readNext();
+        checkToken(TokenType::RPAREN);
         std::shared_ptr<ASTExpressionNode> expr = expressionE();
         checkNextToken(TokenType::RPAREN);
         return expr;
     }
 
-    return atomicIdentifier();
+    auto id = atomicIdentifier();
+    readNext();
+
+    return id;
 }
 
 std::shared_ptr<ASTExpressionNode> Parser::expressionE() {
@@ -76,10 +81,9 @@ std::shared_ptr<ASTExpressionNode> Parser::expressionE() {
 std::shared_ptr<ASTExpressionNode> Parser::expressionT() {
     auto leftOperand = expressionF();
 
-    readNext();
-
     switch(peek().m_type) {
         case TokenType::INTERSECT: {
+            readNext();
             auto rightOperand = expressionF();
             return std::shared_ptr<ASTOperatorIntersectNode>(
                 new ASTOperatorIntersectNode(leftOperand, rightOperand)
@@ -98,6 +102,7 @@ std::shared_ptr<ASTExpressionNode> Parser::expression() {
     checkNextToken(TokenType::ASSIGN);
 
     readNext();
+
     auto rightOperand = expressionE();
     auto assignNode = new ASTOperatorAssignNode(atomicId, rightOperand);
     return std::shared_ptr<ASTOperatorAssignNode>(assignNode);
@@ -257,6 +262,11 @@ bool Parser::checkNextToken(TokenType _type, bool _skipSpaces) {
     if(_skipSpaces && peek().m_type == TokenType::SPACE) {
         readNext();
     }
+
+    return checkToken(_type);
+}
+
+bool Parser::checkToken(TokenType _type) {
 
     // stack errors
     if(_type != peek().m_type) {

@@ -82,10 +82,11 @@ TEST_CASE("[]", "[]") {
     Parser parser(lexer);
 
     auto ast = parser.parse();
+    auto errors = parser.getErrors();
 
-    //while(parser.getErrors().size() > 0) {
-    //    std::cout << parser.getErrors().front() << std::endl;
-    //    parser.getErrors().pop();
-    //}
+    while(errors.size() > 0) {
+        std::cout << errors.front() << std::endl;
+        errors.pop();
+    }
 }
 

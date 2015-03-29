@@ -56,6 +56,7 @@ private:
     std::shared_ptr<ASTDeclarationNode> sphere();
     std::shared_ptr<ASTValueNode> position();
 
+    bool checkToken(TokenType _type);
     bool checkNextToken(TokenType _type, bool _skipSpaces = true);
 
     Token peek();
