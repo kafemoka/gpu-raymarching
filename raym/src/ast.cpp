@@ -78,7 +78,8 @@ void ASTDeclarationNode::createObject(TokenType _type, const std::string& _name)
         }
 
         case TokenType::CUBE: {
-
+            auto dim = std::dynamic_pointer_cast<ASTValueNode>(m_childs[2]);
+            RaymarchCube cube(_name, pos->getValue(), dim->getValue());
             break;
         }
 

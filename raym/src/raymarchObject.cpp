@@ -3,7 +3,7 @@
 long RaymarchObject::s_id = 0;
 
 RaymarchObject::RaymarchObject(std::string _symbol, std::string _position) :
-    m_symbol("$" + _symbol),
+    m_symbol("$_" + _symbol),
     m_position(_position)
 {
     m_id = nextId();
