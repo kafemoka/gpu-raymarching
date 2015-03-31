@@ -34,3 +34,15 @@ protected:
     static std::string s_distanceFunction;
 };
 
+class RaymarchCube : public RaymarchObject {
+
+public:
+    RaymarchCube(std::string _symbol, std::string _pos, std::string _dim);
+    std::map<std::string, std::string> components() const override;
+
+protected:
+    std::string m_dimension;
+
+    static std::string s_distanceFunction;
+};
+

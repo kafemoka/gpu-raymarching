@@ -32,3 +32,20 @@ std::string RaymarchSphere::s_distanceFunction = R"END(
     }
 )END";
 
+RaymarchCube::RaymarchCube(std::string _symbol, std::string _position, std::string _dimension) :
+    RaymarchObject(_symbol, _position),
+    m_dimension(_dimension)
+{}
+
+std::map<std::string, std::string> RaymarchCube::components() const {
+    auto components = RaymarchObject::components();
+    components[m_symbol + "_dim"] = m_dimension;
+    return components;
+}
+
+std::string RaymarchCube::s_distanceFunction = R"END(
+    float sdBox(vec3 p, vec3 b) {
+        return length(max(abs(p) - b, 0.0));
+    }
+)END";
+

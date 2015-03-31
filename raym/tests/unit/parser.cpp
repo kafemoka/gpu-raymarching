@@ -8,7 +8,7 @@ TEST_CASE("[Checks arguments of constructed objects node]", "[Parser]") {
     std::string raymShader = R"END(
 
         Sphere sphere(vec3(0.0, 0.0, 0.0), 10.0);
-        Cube cube(vec3(10.0, 20.0, 0.0));
+        Cube cube(vec3(10.0, 20.0, 0.0), vec3(1.0, 1.0, 1.0));
 
     )END";
 
@@ -44,7 +44,7 @@ TEST_CASE("[Checks arguments of constructed objects node]", "[Parser]") {
 TEST_CASE("[Checks that two symbols can't be defined by the same identifier]", "[Parser]") {
     std::string raymShader = R"END(
         Sphere identifier(vec3(0.0, 0.0, 0.0), 10.0);
-        Cube identifier(vec3(0.0, 0.0, 0.0));
+        Cube identifier(vec3(0.0, 0.0, 0.0), vec3(1.0, 1.0, 1.0));
     )END";
 
     std::shared_ptr<Lexer> lexer(new Lexer());
@@ -64,8 +64,8 @@ TEST_CASE("[]", "[]") {
 
         Sphere sphere1(vec3(0.0, 0.0, 0.0), 10.0);
         Sphere sphere2(vec3(0.0, 0.0, 0.0), 5.0);
-        Cube cube1(vec3(10.0, 20.0, 0.0));
-        Cube cube2(vec3(0.0, 0.0, 0.0));
+        Cube cube1(vec3(10.0, 20.0, 0.0), vec3(1.0, 1.0, 1.0));
+        Cube cube2(vec3(0.0, 0.0, 0.0), vec3(1.0, 1.0, 1.0));
 
         Object o1 ;
 

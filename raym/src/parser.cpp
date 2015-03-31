@@ -242,6 +242,8 @@ std::shared_ptr<ASTDeclarationNode> Parser::cube() {
 
     checkNextToken(TokenType::LPAREN);
     args.push_back(position());
+    checkNextToken(TokenType::COMMA);
+    args.push_back(position());
     checkNextToken(TokenType::RPAREN);
     checkNextToken(TokenType::SEMICOLON);
 
