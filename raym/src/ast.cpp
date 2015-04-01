@@ -69,22 +69,31 @@ void ASTAggregateNode::createObject(const std::string& _name) {
 
 void ASTDeclarationNode::createObject(TokenType _type, const std::string& _name) {
     auto pos = std::dynamic_pointer_cast<ASTValueNode>(m_childs[1]);
+    auto object = nullptr;
 
     switch (_type) {
         case TokenType::SPHERE: {
             auto radius = std::dynamic_pointer_cast<ASTValueNode>(m_childs[2]);
-            RaymarchSphere sphere(_name, pos->getValue(), radius->getValue());
+            auto object = std::shared_ptr<RaymarchObject>(
+                new RaymarchSphere(_name, pos->getValue(), radius->getValue())
+            );
             break;
         }
 
         case TokenType::CUBE: {
             auto dim = std::dynamic_pointer_cast<ASTValueNode>(m_childs[2]);
-            RaymarchCube cube(_name, pos->getValue(), dim->getValue());
+            auto object = std::shared_ptr<RaymarchObject>(
+                new RaymarchCube(_name, pos->getValue(), dim->getValue())
+            );
             break;
         }
 
         default:
             break;
+    }
+
+    if(object) {
+        m_context->m_objects[_name] = object;
     }
 }
 
