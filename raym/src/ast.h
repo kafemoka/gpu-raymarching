@@ -55,16 +55,6 @@ private:
     void createObject(TokenType _type, const std::string& _name);
 };
 
-class ASTAggregateNode : public ASTStatementNode {
-public:
-    ASTAggregateNode(std::shared_ptr<ASTValueNode> _id,
-                     std::shared_ptr<Context> _context,
-                     int _line, int _column);
-    void exec() override;
-private:
-    void createObject(const std::string& _name);
-};
-
 class ASTExpressionNode : public ASTNode {
 public:
     virtual void evaluate(std::shared_ptr<Context> _context) = 0;
@@ -85,6 +75,8 @@ protected:
 public:
     ASTOperatorNode(std::shared_ptr<ASTExpressionNode> _left,
                     std::shared_ptr<ASTExpressionNode> _right);
+
+    void evaluate(std::shared_ptr<Context> _context) override;
 };
 
 class ASTAtomicNode : public ASTExpressionNode {
@@ -99,6 +91,17 @@ public:
                           std::shared_ptr<ASTExpressionNode> _right)
     : ASTOperatorNode(_left, _right) {}
     void evaluate(std::shared_ptr<Context> _context) override;
+};
+
+class ASTAggregateNode : public ASTStatementNode {
+public:
+    ASTAggregateNode(std::shared_ptr<ASTValueNode> _id,
+                     std::shared_ptr<Context> _context,
+                     std::shared_ptr<ASTOperatorAssignNode> _assign,
+                     int _line, int _column);
+    void exec() override;
+private:
+    void createObject(const std::string& _name);
 };
 
 class ASTOperatorUnionNode : public ASTOperatorNode {

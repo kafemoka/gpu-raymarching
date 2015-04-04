@@ -49,3 +49,25 @@ std::string RaymarchCube::s_distanceFunction = R"END(
     }
 )END";
 
+RaymarchAggregate::RaymarchAggregate(std::string _symbol) : RaymarchObject(_symbol, "") {
+
+}
+
+RaymarchObject& RaymarchAggregate::operator+(const RaymarchObject& _object) {
+
+    return *this;
+}
+
+RaymarchObject& RaymarchAggregate::operator-(const RaymarchObject& _object) {
+
+    return *this;
+}
+
+RaymarchObject& RaymarchAggregate::operator/(const RaymarchObject& _object) {
+
+    return *this;
+}
+
+std::string RaymarchAggregate::resolve() const {
+
+}

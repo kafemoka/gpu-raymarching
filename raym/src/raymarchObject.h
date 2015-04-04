@@ -22,6 +22,18 @@ protected:
     static long s_id;
 };
 
+class RaymarchAggregate : public RaymarchObject {
+public:
+    RaymarchAggregate(std::string _symbol);
+
+    RaymarchObject& operator+(const RaymarchObject& _object);
+    RaymarchObject& operator-(const RaymarchObject& _object);
+    RaymarchObject& operator/(const RaymarchObject& _object);
+
+    std::string resolve() const;
+
+};
+
 class RaymarchSphere : public RaymarchObject {
 
 public:

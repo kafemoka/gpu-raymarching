@@ -1,23 +1,32 @@
 #include "ast.h"
 
 ASTDeclarationNode::ASTDeclarationNode(std::shared_ptr<ASTValueNode> _id,
-                                       std::shared_ptr<Context> _context,
-                                       std::vector<std::shared_ptr<ASTValueNode>> _args,
-                                       TokenType _type,
-                                       int _line, int _column)
-    : ASTStatementNode(_context) {
+    std::shared_ptr<Context> _context,
+    std::vector<std::shared_ptr<ASTValueNode>> _args,
+    TokenType _type,
+    int _line, int _column)
+: ASTStatementNode(_context) {
 
     m_childs.push_back(_id);
+
     for(auto& arg : _args) {
         m_childs.push_back(arg);
     }
+
     _context->m_symbolTable->add({ _type, _id->getValue(), _line, _column });
 }
 
 ASTAggregateNode::ASTAggregateNode(std::shared_ptr<ASTValueNode> _id,
-                                   std::shared_ptr<Context> _context,
-                                   int _line, int _column)
-    : ASTStatementNode(_context) {
+    std::shared_ptr<Context> _context,
+    std::shared_ptr<ASTOperatorAssignNode> _assign,
+    int _line, int _column)
+: ASTStatementNode(_context) {
+
+    m_childs.push_back(_id);
+
+    if(_assign) {
+        m_childs.push_back(_assign);
+    }
 
     _context->m_symbolTable->add({ TokenType::OBJECT, _id->getValue(), _line, _column });
 }
@@ -27,6 +36,11 @@ ASTExpressionStatementNode::ASTExpressionStatementNode(std::shared_ptr<ASTExpres
     : ASTStatementNode(_context) {
         
     m_childs.push_back(_expr);
+}
+
+void ASTOperatorNode::evaluate(std::shared_ptr<Context> _context) {
+    getLeftChild()->evaluate(_context);
+    getRightChild()->evaluate(_context);
 }
 
 void ASTStatementsNode::addStatement(std::shared_ptr<ASTStatementNode> _stmt) {
@@ -56,15 +70,26 @@ void ASTDeclarationNode::exec() {
 }
 
 void ASTExpressionStatementNode::exec() {
-    
+    auto op = std::dynamic_pointer_cast<ASTOperatorNode>(m_childs[0]);
+    op->evaluate(m_context);
 }
 
 void ASTAggregateNode::exec() {
-    
+    auto identifier = std::dynamic_pointer_cast<ASTValueNode>(m_childs[0]);
+    const std::string& lexeme = identifier->getValue();
+
+    createObject(lexeme);
+
+    if (m_childs.size() == 2) {
+        auto assign = std::dynamic_pointer_cast<ASTOperatorAssignNode>(m_childs[1]);
+        assign->evaluate(m_context);
+    }
 }
 
 void ASTAggregateNode::createObject(const std::string& _name) {
-
+    m_context->m_objects[_name] = std::shared_ptr<RaymarchObject>(
+        new RaymarchAggregate(_name)
+    );
 }
 
 void ASTDeclarationNode::createObject(TokenType _type, const std::string& _name) {
@@ -105,18 +130,18 @@ void ASTAtomicNode::evaluate(std::shared_ptr<Context> _context) {
 
 }
 
-void ASTOperatorUnionNode::evaluate(std::shared_ptr<Context> _context) {
-
+void ASTOperatorAssignNode::evaluate(std::shared_ptr<Context> _context) {
+    ASTOperatorNode::evaluate(_context);
 }
 
-void ASTOperatorAssignNode::evaluate(std::shared_ptr<Context> _context) {
-    
+void ASTOperatorUnionNode::evaluate(std::shared_ptr<Context> _context) {
+    ASTOperatorNode::evaluate(_context);
 }
 
 void ASTOperatorSubstractNode::evaluate(std::shared_ptr<Context> _context) {
-
+    ASTOperatorNode::evaluate(_context);
 }
 
 void ASTOperatorIntersectNode::evaluate(std::shared_ptr<Context> _context) {
-
+    ASTOperatorNode::evaluate(_context);
 }

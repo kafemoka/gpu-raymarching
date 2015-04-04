@@ -19,7 +19,7 @@ std::shared_ptr<ASTStatementNode> Parser::aggregate() {
 
     switch(peek().m_type) {
         case TokenType::SEMICOLON: {
-            auto node = new ASTAggregateNode(idNode, m_context, m_lexer->getLine(), m_lexer->getColumn());
+            auto node = new ASTAggregateNode(idNode, m_context, nullptr, m_lexer->getLine(), m_lexer->getColumn());
             return std::shared_ptr<ASTAggregateNode>(node);
         }
 
@@ -28,14 +28,16 @@ std::shared_ptr<ASTStatementNode> Parser::aggregate() {
 
             auto rightOperand = expressionE();
 
-            auto atomicId = std::shared_ptr<ASTAtomicNode>(new
-                ASTAtomicNode(idNode)
+            auto atomicId = std::shared_ptr<ASTAtomicNode>(
+                new ASTAtomicNode(idNode)
             );
 
-            auto node = new ASTOperatorAssignNode(atomicId, rightOperand);
-            return std::shared_ptr<ASTExpressionStatementNode>(
-                new ASTExpressionStatementNode(std::shared_ptr<ASTExpressionNode>(node), m_context)
+            auto assign = std::shared_ptr<ASTOperatorAssignNode>(
+                new ASTOperatorAssignNode(atomicId, rightOperand)
             );
+            
+            auto node = new ASTAggregateNode(idNode, m_context, assign, m_lexer->getLine(), m_lexer->getColumn());
+            return std::shared_ptr<ASTAggregateNode>(node);
         }
     }
 
