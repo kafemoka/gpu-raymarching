@@ -94,6 +94,23 @@ TEST_CASE("[]", "[]") {
         }
     }
 
+    for(auto& obj : parser.getContext()->m_objects) {
+        auto operations = obj.second->getOperations();
+
+        std::cout << "Operations for " << obj.second->getSymbol() << std::endl;
+        while(operations.size() > 0) {
+            auto op = operations.front();
+
+            std::cout << op.m_kind;
+            std::cout << op.m_first->getSymbol();
+            std::cout << op.m_second->getSymbol();
+
+            std::cout << std::endl;
+
+            operations.pop();
+        }
+    }
+
     while(errors.size() > 0) {
         std::cout << errors.front() << std::endl;
         errors.pop();

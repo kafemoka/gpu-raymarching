@@ -38,11 +38,6 @@ ASTExpressionStatementNode::ASTExpressionStatementNode(std::shared_ptr<ASTExpres
     m_childs.push_back(_expr);
 }
 
-void ASTOperatorNode::evaluate(std::shared_ptr<Context> _context) {
-    getLeftChild()->evaluate(_context);
-    getRightChild()->evaluate(_context);
-}
-
 void ASTStatementsNode::addStatement(std::shared_ptr<ASTStatementNode> _stmt) {
     m_childs.push_back(_stmt);
 }
@@ -82,7 +77,9 @@ void ASTAggregateNode::exec() {
 
     if (m_childs.size() == 2) {
         auto assign = std::dynamic_pointer_cast<ASTOperatorAssignNode>(m_childs[1]);
-        assign->evaluate(m_context);
+        auto aggregate = assign->evaluate(m_context);
+        m_context->m_objects[aggregate.getSymbol()] = std::make_shared<RaymarchObject>(aggregate);
+        m_context->m_objects[lexeme]->assign(aggregate);
     }
 }
 
@@ -94,12 +91,12 @@ void ASTAggregateNode::createObject(const std::string& _name) {
 
 void ASTDeclarationNode::createObject(TokenType _type, const std::string& _name) {
     auto pos = std::dynamic_pointer_cast<ASTValueNode>(m_childs[1]);
-    auto object = nullptr;
+    std::shared_ptr<RaymarchObject> object = nullptr;
 
     switch (_type) {
         case TokenType::SPHERE: {
             auto radius = std::dynamic_pointer_cast<ASTValueNode>(m_childs[2]);
-            auto object = std::shared_ptr<RaymarchObject>(
+            object = std::shared_ptr<RaymarchObject>(
                 new RaymarchSphere(_name, pos->getValue(), radius->getValue())
             );
             break;
@@ -107,7 +104,7 @@ void ASTDeclarationNode::createObject(TokenType _type, const std::string& _name)
 
         case TokenType::CUBE: {
             auto dim = std::dynamic_pointer_cast<ASTValueNode>(m_childs[2]);
-            auto object = std::shared_ptr<RaymarchObject>(
+            object = std::shared_ptr<RaymarchObject>(
                 new RaymarchCube(_name, pos->getValue(), dim->getValue())
             );
             break;
@@ -126,22 +123,29 @@ ASTAtomicNode::ASTAtomicNode(std::shared_ptr<ASTValueNode> _value) {
     m_childs.push_back(_value);
 }
 
-void ASTAtomicNode::evaluate(std::shared_ptr<Context> _context) {
-
+RaymarchObject ASTAtomicNode::evaluate(std::shared_ptr<Context> _context) {
+    auto child = std::dynamic_pointer_cast<ASTValueNode>(m_childs[0]);
+    return *_context->m_objects[child->getValue()];
 }
 
-void ASTOperatorAssignNode::evaluate(std::shared_ptr<Context> _context) {
-    ASTOperatorNode::evaluate(_context);
+RaymarchObject ASTOperatorAssignNode::evaluate(std::shared_ptr<Context> _context) {
+    return getRightChild()->evaluate(_context);
 }
 
-void ASTOperatorUnionNode::evaluate(std::shared_ptr<Context> _context) {
-    ASTOperatorNode::evaluate(_context);
+RaymarchObject ASTOperatorUnionNode::evaluate(std::shared_ptr<Context> _context) {
+    auto op = getRightChild()->evaluate(_context) + getLeftChild()->evaluate(_context);
+    _context->m_objects[op.getSymbol()] = std::make_shared<RaymarchObject>(op);
+    return op;
 }
 
-void ASTOperatorSubstractNode::evaluate(std::shared_ptr<Context> _context) {
-    ASTOperatorNode::evaluate(_context);
+RaymarchObject ASTOperatorSubstractNode::evaluate(std::shared_ptr<Context> _context) {
+    auto op = getRightChild()->evaluate(_context) - getLeftChild()->evaluate(_context);
+    _context->m_objects[op.getSymbol()] = std::make_shared<RaymarchObject>(op);
+    return op;
 }
 
-void ASTOperatorIntersectNode::evaluate(std::shared_ptr<Context> _context) {
-    ASTOperatorNode::evaluate(_context);
+RaymarchObject ASTOperatorIntersectNode::evaluate(std::shared_ptr<Context> _context) {
+    auto op = getRightChild()->evaluate(_context) / getLeftChild()->evaluate(_context);
+    _context->m_objects[op.getSymbol()] = std::make_shared<RaymarchObject>(op);
+    return op;
 }

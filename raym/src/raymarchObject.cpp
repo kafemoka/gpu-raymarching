@@ -49,25 +49,37 @@ std::string RaymarchCube::s_distanceFunction = R"END(
     }
 )END";
 
-RaymarchAggregate::RaymarchAggregate(std::string _symbol) : RaymarchObject(_symbol, "") {
+RaymarchAggregate::RaymarchAggregate(std::string _symbol) : RaymarchObject(_symbol, "") {}
 
+RaymarchObject RaymarchObject::operation(const std::string& op, RaymarchObject _object) {
+    RaymarchObject tmp = RaymarchAggregate("tmp_" + op);
+    tmp.m_symbol += std::to_string(tmp.m_id);
+    tmp.m_operations.push({ op,
+        std::make_shared<RaymarchObject>(*this),
+        std::make_shared<RaymarchObject>(_object)
+    });
+    return tmp;
 }
 
-RaymarchObject& RaymarchAggregate::operator+(const RaymarchObject& _object) {
-
-    return *this;
+void RaymarchObject::assign(RaymarchObject _other) {
+    m_operations.push({ "assign",
+        std::make_shared<RaymarchObject>(*this),
+        std::make_shared<RaymarchObject>(_other)
+    });
 }
 
-RaymarchObject& RaymarchAggregate::operator-(const RaymarchObject& _object) {
-
-    return *this;
+RaymarchObject RaymarchObject::operator+(RaymarchObject _object) {
+    return operation("union", _object);
 }
 
-RaymarchObject& RaymarchAggregate::operator/(const RaymarchObject& _object) {
+RaymarchObject RaymarchObject::operator-(RaymarchObject _object) {
+    return operation("minus", _object);
+}
 
-    return *this;
+RaymarchObject RaymarchObject::operator/(RaymarchObject _object) {
+    return operation("intersect", _object);
 }
 
 std::string RaymarchAggregate::resolve() const {
-
+    
 }

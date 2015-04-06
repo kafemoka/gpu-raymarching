@@ -38,6 +38,8 @@ public:
     std::queue<std::string> getErrors();
     std::shared_ptr<AST> parse();
 
+    std::shared_ptr<Context> getContext() { return m_context; }
+
 private:
     void abort();
     void raymarch();

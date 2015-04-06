@@ -57,7 +57,7 @@ private:
 
 class ASTExpressionNode : public ASTNode {
 public:
-    virtual void evaluate(std::shared_ptr<Context> _context) = 0;
+    virtual RaymarchObject evaluate(std::shared_ptr<Context> _context) = 0;
 };
 
 class ASTExpressionStatementNode : public ASTStatementNode {
@@ -75,14 +75,12 @@ protected:
 public:
     ASTOperatorNode(std::shared_ptr<ASTExpressionNode> _left,
                     std::shared_ptr<ASTExpressionNode> _right);
-
-    void evaluate(std::shared_ptr<Context> _context) override;
 };
 
 class ASTAtomicNode : public ASTExpressionNode {
 public:
     ASTAtomicNode(std::shared_ptr<ASTValueNode> _value);
-    void evaluate(std::shared_ptr<Context> _context) override;
+    RaymarchObject evaluate(std::shared_ptr<Context> _context) override;
 };
 
 class ASTOperatorAssignNode : public ASTOperatorNode {
@@ -90,7 +88,7 @@ public:
     ASTOperatorAssignNode(std::shared_ptr<ASTExpressionNode> _left,
                           std::shared_ptr<ASTExpressionNode> _right)
     : ASTOperatorNode(_left, _right) {}
-    void evaluate(std::shared_ptr<Context> _context) override;
+    RaymarchObject evaluate(std::shared_ptr<Context> _context) override;
 };
 
 class ASTAggregateNode : public ASTStatementNode {
@@ -109,7 +107,7 @@ public:
     ASTOperatorUnionNode(std::shared_ptr<ASTExpressionNode> _left,
                         std::shared_ptr<ASTExpressionNode> _right)
     : ASTOperatorNode(_left, _right) {}
-    void evaluate(std::shared_ptr<Context> _context) override;
+    RaymarchObject evaluate(std::shared_ptr<Context> _context) override;
 };
 
 class ASTOperatorIntersectNode : public ASTOperatorNode {
@@ -117,7 +115,7 @@ public:
     ASTOperatorIntersectNode(std::shared_ptr<ASTExpressionNode> _left,
                              std::shared_ptr<ASTExpressionNode> _right)
     : ASTOperatorNode(_left, _right) {}
-    void evaluate(std::shared_ptr<Context> _context) override;
+    RaymarchObject evaluate(std::shared_ptr<Context> _context) override;
 };
 
 class ASTOperatorSubstractNode : public ASTOperatorNode {
@@ -125,5 +123,5 @@ public:
     ASTOperatorSubstractNode(std::shared_ptr<ASTExpressionNode> _left,
                              std::shared_ptr<ASTExpressionNode> _right)
     : ASTOperatorNode(_left, _right) {}
-    void evaluate(std::shared_ptr<Context> _context) override;
+    RaymarchObject evaluate(std::shared_ptr<Context> _context) override;
 };

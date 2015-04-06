@@ -2,6 +2,15 @@
 
 #include <string>
 #include <map>
+#include <queue>
+
+class RaymarchObject;
+
+struct Operation {
+    std::string m_kind;
+    std::shared_ptr<RaymarchObject> m_first;
+    std::shared_ptr<RaymarchObject> m_second;
+};
 
 class RaymarchObject {
 
@@ -11,6 +20,16 @@ public:
     virtual std::map<std::string, std::string> components() const;
 
     long getId() { return m_id; }
+    std::string getSymbol() { return m_symbol; }
+
+    RaymarchObject operator+(RaymarchObject _object);
+    RaymarchObject operator-(RaymarchObject _object);
+    RaymarchObject operator/(RaymarchObject _object);
+    void assign(RaymarchObject _other);
+
+    std::queue<Operation> getOperations() {
+        return m_operations;
+    }
 
 protected:
     static long nextId() { return s_id++; }
@@ -20,15 +39,15 @@ protected:
     long m_id;
 
     static long s_id;
+
+private:
+    RaymarchObject operation(const std::string& op, RaymarchObject _object);
+    std::queue<Operation> m_operations;
 };
 
 class RaymarchAggregate : public RaymarchObject {
 public:
     RaymarchAggregate(std::string _symbol);
-
-    RaymarchObject& operator+(const RaymarchObject& _object);
-    RaymarchObject& operator-(const RaymarchObject& _object);
-    RaymarchObject& operator/(const RaymarchObject& _object);
 
     std::string resolve() const;
 
